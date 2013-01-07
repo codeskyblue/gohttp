@@ -495,7 +495,7 @@ func processFsEvents() {
 func main() {
 	flag.IntVar(&(reloadCfg.port), "port", 8000, "Which port to listen")
 	flag.StringVar(&(reloadCfg.root), "root", ".", "Directory root been watched")
-	flag.StringVar(&(reloadCfg.command), "command", "", "Command to run before reload browser, useful for preprocess, like compile scss")
+	flag.StringVar(&(reloadCfg.command), "command", "", "Command to run before reload browser, useful for preprocess, like compile scss. The files been chaneged, along with event type are pass as arguments")
 	flag.StringVar(&(reloadCfg.ignores), "ignores", "", "Ignored file pattens, seprated by ','")
 	flag.BoolVar(&(reloadCfg.private), "private", false, "Only listen on lookback interface")
 	flag.Parse()
