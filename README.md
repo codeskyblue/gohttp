@@ -1,6 +1,6 @@
 # HTTP Watcher
 
-HTTP file Server + File Watcher = HTTP Watcher => hit F5 when needed for you
+HTTP file Server + Directory Watcher = HTTP Watcher => hit F5 when needed for you
 
 >
 Wacher directory for change, automatically reload connected bowsers. Just start the server by running `http-watcher`, happy design your site, `http-watcher` did the rest for you
