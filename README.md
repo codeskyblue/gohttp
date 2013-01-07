@@ -1,9 +1,9 @@
 # HTTP Watcher
 
-HTTP file Server + File Watcher = HTTP Watcher => hit F5 for you
+HTTP file Server + File Watcher = HTTP Watcher => hit F5 when needed for you
 
 >
-Wacher file for change, automatically reload connected bowser. Just start the server by run `http-watcher`, happy design your site, http-watcher did the rest for you
+Wacher directory for change, automatically reload connected bowsers. Just start the server by running `http-watcher`, happy design your site, `http-watcher` did the rest for you
 One source file, one binary, works on everywhare golang works
 
 ### build
