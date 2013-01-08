@@ -550,7 +550,7 @@ func main() {
 	t, _ = template.New("doc").Parse(HELP_HTML)
 	reloadCfg.docTmpl = t
 
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	// log.SetFlags(log.LstdFlags | log.Lshortfile)
 	compilePattens()
 	if e := os.Chdir(reloadCfg.root); e != nil {
 		log.Panic(e)
@@ -561,11 +561,13 @@ func main() {
 	http.HandleFunc("/", handler)
 
 	int := ":" + strconv.Itoa(reloadCfg.port)
+	p := strconv.Itoa(reloadCfg.port)
+	mesg := "; please visit http://127.0.0.1:" + p
 	if reloadCfg.private {
 		int = "localhost" + int
-		log.Printf("listens on 127.0.0.1@" + strconv.Itoa(reloadCfg.port))
+		log.Printf("listens on 127.0.0.1@" + p + mesg)
 	} else {
-		log.Printf("listens on 0.0.0.0@" + strconv.Itoa(reloadCfg.port))
+		log.Printf("listens on 0.0.0.0@" + p + mesg)
 	}
 	if err := http.ListenAndServe(int, nil); err != nil {
 		log.Fatal(err)
