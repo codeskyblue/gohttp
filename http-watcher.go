@@ -285,11 +285,14 @@ func getAllFileMeta() map[string]time.Time {
 
 	walkFn := func(path string, info os.FileInfo, err error) error {
 		if err != nil { // TODO permisstion denyed
-
-			// log.Println(err)
 		}
-		if !info.IsDir() && !shouldIgnore(path) {
+		ignore := shouldIgnore(path)
+		if !info.IsDir() && !ignore {
 			files[path] = info.ModTime()
+		}
+
+		if info.IsDir() && ignore {
+			return filepath.SkipDir
 		}
 		return nil
 	}
