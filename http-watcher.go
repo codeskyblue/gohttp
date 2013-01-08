@@ -47,77 +47,64 @@ const (
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Directory Listing: {{.dir}}</title>
     <style>
-      body {
-          font: 15px/1.4 Monospace;
+      body { font: 14px/1.4 Monospace; }
+      #page-wrap { margin: 0 auto; width: 800px; }
+     	@media (max-width: 1000px) {
+        #page-wrap { width: auto; padding: 0 4px; }
+        .mtime { font-size: 9px; white-space: nowrap;}
+      	table, tr { width: 100%;}
+      	.name {
+	         max-width: 450px;
+           display: inline-block;
+	         text-overflow: ellipsis;
+           overflow: hidden;
+	      }
       }
-      #page-wrap {
-          margin: 0 auto;
-          width: 800px;
-      }
-      table {
-          width: 100%;
-      }
+      table { width: 100%; }
       caption {
           font-weight: bold;
           font-size: 18px;
           margin: 20px;
       }
       thead {
-          font-weight: bold;
-          font-size: 16px;
+          font-size: 15px;
           background: #DFF0D8;
       }
-      thead td {
-          padding: 3px 5px;
-      }
-      tbody td {
-          padding: 2px 4px;
-      }
-      tr:nth-child(2n) {
-          background: #eee;n
-      }
-      tr:nth-child(2n) td {
-          background: #eee;
-      }
+      th, td { padding: 5px 2px; }
+      tr:nth-child(2n) { background: #eee;n }
+      tr:nth-child(2n) td { background: #eee; }
       #footer {
-          margin-top: 20px;
+          margin: 20px 0;
           text-align: right;
           font-size: 11px;
           color: #888;
       }
-      #footer .doc {
-          float: left;
-      }
-      #footer a {
-          color: #555;
-      }
+      #footer a { color: #555; }
     </style>
   </head>
   <body>
     <div id="page-wrap">
-      <table>
+      <table cellspacing=0>
         <caption>Directory List:  {{.dir}}</caption>
         <thead>
-          <td>File</td>
-          <td>Size</td>
-          <td>Last Modified</td>
+          <th>File</th>
+          <th>Size</th>
+          <th>Last Modified</th>
         </thead>
         {{range .files}}
         <tr>
-          <td><a href="{{.href}}">{{.name}}</a></td>
+          <td class="name"><a href="{{.href}}">{{.name}}</a></td>
           <td>{{ .size }}</td>
-          <td>{{ .mtime }}</td>
+          <td class="mtime">{{ .mtime }}</td>
         </tr>
         {{end}}
       </table>
-      <div id="footer">
-        <p>
-          <a href="https://github.com/shenfeng/http-watcher">http-watcher</a>,
-          write by <a href="http://shenfeng.me">Feng Shen</a> with golang,
-          <a href="/_d/doc">Documentation</a>
-        </p>
+			<div id="footer">
+        <a href="https://github.com/shenfeng/http-watcher">http-watcher</a>,
+        write by <a href="http://shenfeng.me">Feng Shen</a> in golang,<a href="/_d/doc">doc</a>
       </div>
     </div>
   </body>
@@ -126,20 +113,25 @@ const (
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Reload Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTTP watcher Documentation</title>
     <style>
       body { width: 800px; margin: 0 auto; }
+	    @media (max-width: 1000px) {
+        body { width: auto; padding: 0 4px; }
+      }
       .mesg { background: #fff1a8; padding: 6px 2px; font: bold 15px monospace; }
       .note {
       	  background: #ffffcc;
       	  font-family: monospace;
       	  padding: 4px;
       }
+      pre { white-space: pre-wrap;}
       h1 { text-align: center;}
       ul { padding: 0; list-style: none; }
       li { padding: 4px; margin: 4px 0; }
       #footer {
-          margin-top: 20px;
+          margin: 20px 0;
           text-align: right;
           font-size: 11px;
           color: #888;
@@ -181,13 +173,12 @@ const (
 -port=8000: Which port to listen
 -private=false: Only listen on lookback interface, otherwise listen on all interface
 -proxy=0: Local dynamic site's port number, like 8080, HTTP watcher proxy it, automatically reload browsers when watched directory's file changed
--root=".": Watched root directory for filesystem events, also the HTTP File Server's root directory    </pre>
+-root=".": Watched root directory for filesystem events, also the HTTP File Server's root directory
+    </pre>
+    </div>
     <div id="footer">
-      <p>
-        <a href="https://github.com/shenfeng/http-watcher">http-watcher</a>,
-        write by <a href="http://shenfeng.me">Feng Shen</a> with golang,
-        <a href="/_d/doc">Documentation</a>
-      </p>
+       <a href="https://github.com/shenfeng/http-watcher">http-watcher</a>,
+       write by <a href="http://shenfeng.me">Feng Shen</a> in golang,<a href="/_d/doc">doc</a>
     </div>
   </body>
 </html>
@@ -319,7 +310,7 @@ func dirList(w http.ResponseWriter, f *os.File) {
 	if dirs, err := f.Readdir(-1); err == nil {
 		files := make([]map[string]string, len(dirs)+1)
 		files[0] = map[string]string{
-			"name": "..", "href": "..",
+			"name": "..", "href": "..", "size": "-", "mtime": "-",
 		}
 		for i, d := range dirs {
 			href := d.Name()
