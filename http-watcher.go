@@ -168,28 +168,20 @@ const (
 		{{range .ignores}}<li>{{.}}</li>{{end}}
       </ol>
     </div>
-    <h3>File Browser (automatically reload when file changes detected)</h3>
+    <h3>Visit (automatically reload when file changes detected)</h3>
     <ul>
       {{range .hosts}}
-        <li class="note"><a href="/">http://{{.}}/</a></li>
+        <li class="note"><a href="http://{{.}}/">http://{{.}}/</a></li>
       {{end}}
     </ul>
-    <h3>Live Reload when changes detected</h3>
-    <p>For other projects, like your go or Clojure web project, copy and paste the following code to your code</p>
-    <ul>
-      {{range .hosts}}
-        <li class="note">&lt;script src="http://{{.}}/_d/js"&gt; &lt;/script&gt;</li>
-      {{end}}
-    </ul>
-
     <h3>Command Help</h3>
     <pre>
--command="": Command to run before reload browser, useful for preprocess, like compile scss
--ignores="": Ignored file pattens, seprated by ','
+-command="": Command to run before reload browser, useful for preprocess, like compile scss. The files been chaneged, along with event type are pass as arguments
+-ignores="": Ignored file pattens, seprated by ',', used to ignore the filesystem events of some files
 -port=8000: Which port to listen
--private=false: Only listen on lookback interface
--root=".": Directory root been watched
-    </pre>
+-private=false: Only listen on lookback interface, otherwise listen on all interface
+-proxy=0: Local dynamic site's port number, like 8080, HTTP watcher proxy it, automatically reload browsers when watched directory's file changed
+-root=".": Watched root directory for filesystem events, also the HTTP File Server's root directory    </pre>
     <div id="footer">
       <p>
         <a href="https://github.com/shenfeng/http-watcher">http-watcher</a>,
