@@ -283,9 +283,7 @@ func getAllFileMeta() map[string]time.Time {
 	if err := filepath.Walk(reloadCfg.root, walkFn); err != nil {
 		log.Println(err)
 	}
-	if len(files) > 8000 {
-		log.Println("WARN: directory has too many files: " + strconv.Itoa(len(files)))
-	}
+
 	return files
 }
 
@@ -443,8 +441,11 @@ func handler(w http.ResponseWriter, req *http.Request) {
 
 func startMonitorFs() {
 	files := getAllFileMeta()
+	if len(files) > 1000 {
+		log.Println("WARN: directory has too many files: " + strconv.Itoa(len(files)) + "; if CPU usage is high, try tweak -ignores param")
+	}
 	for {
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(180 * time.Millisecond)
 		events := make([]FileEvent, 0)
 		tmp := getAllFileMeta()
 		for file, mTime := range tmp {

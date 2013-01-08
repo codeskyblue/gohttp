@@ -53,3 +53,8 @@ also accept -ignores='regexp1,regexp2,regexp3' to ignore centain files
 also accept -command=$SCRIPT_PATH to do some preprocessing before reload browsers. Take `preprocess` script as an example
 
 `http-watcher` acts as a proxy in this configration
+
+### The CPU usage is high
+
+http-watcher is currently polling filesystem for event. When the directory is large, it may eat the CPU
+try to add more ignore pattens will make it lower
