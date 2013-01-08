@@ -1,0 +1,45 @@
+#! /bin/bash
+
+if [ $# -eq 0 ]; then # show help
+    echo "Used to preprocss some file: like compile scss, cleanup html before reload browsers"
+    exit 1
+fi
+
+# this script is runned with CWD = root param passed to http-watcher
+
+# [event file]+ pair are passed as command line args
+while [ $# -ne 0 ]; do
+    event=$1; shift             # event name
+    file=$1; shift              # file name
+    extention=${file##*.}       # file extension
+    case $extention in
+        scss) # compile scss to css
+            mkdir -p public/css/
+            for scss in $(find . -name "[^_]*.scss"); do
+                name=$(basename $scss) # filename
+                name="${name%.*}"      #  remove extension
+                sass -t compressed --cache-location /tmp $scss public/css/$name.css
+            done
+            ;;
+        tpl) # compress the changed mustache template using htmlcompressor
+            mkdir -p src/templates
+            # compress files templates to src/templates
+            target=$(echo $file | sed -e 's/templates/src\/templates/')
+            java -jar thirdparty/htmlcompressor.jar \
+                --type html \
+                --charset utf8 \
+                --remove-quotes  \
+                --remove-script-attr \
+                --remove-link-attr \
+                --remove-style-attr \
+                --simple-bool-attr \
+                --remove-intertag-spaces $file -o $target
+            ;;
+            #TODO tell server to reload the template
+        clj)
+            #TODO hotswap code
+            ;;
+    esac
+done
+
+# http-watcher -root ~/workspace/rssminer  -ignores "test/,\.css$,.#,src/templates" -proxy 9090 -command ./preprocess
