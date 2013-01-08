@@ -38,9 +38,12 @@ const (
     } else {
       document.body.appendChild(js);
     }
+    if(window.console && console.log) {
+       console.log("http-watcher reload connected")
+    }
   }, 300);
 })();`
-	DIR_HTML  = `<!doctype html>
+	DIR_HTML = `<!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -126,7 +129,7 @@ const (
     <title>Reload Documentation</title>
     <style>
       body { width: 800px; margin: 0 auto; }
-      .mesg { background: #fff1a8; padding: 3px; }
+      .mesg { background: #fff1a8; padding: 6px 2px; font: bold 15px monospace; }
       .note {
       	  background: #ffffcc;
       	  font-family: monospace;
@@ -222,6 +225,7 @@ type ReloadMux struct {
 	docTmpl       *template.Template
 	clients       []Client
 	private       bool
+	proxy         int
 }
 
 var reloadCfg = ReloadMux{
@@ -247,18 +251,18 @@ func showDoc(w http.ResponseWriter, req *http.Request, err error) {
 	w.Header().Add("Content-Type", "text/html; charset=utf-8")
 	abs, _ := filepath.Abs(".")
 	reloadCfg.docTmpl.Execute(w, map[string]interface{}{
-			"error": err,
-			"dir": abs,
-			"ignores": reloadCfg.ignorePattens,
-			"hosts": publicHosts(),
-		})
+		"error":   err,
+		"dir":     abs,
+		"ignores": reloadCfg.ignorePattens,
+		"hosts":   publicHosts(),
+	})
 
 }
 
 func publicHosts() []string {
 	ips := make([]string, 0)
 	if reloadCfg.private {
-		ips = append(ips, "127.0.0.1:" + strconv.Itoa(reloadCfg.port))
+		ips = append(ips, "127.0.0.1:"+strconv.Itoa(reloadCfg.port))
 	} else {
 		if addrs, err := net.InterfaceAddrs(); err == nil {
 			r, _ := regexp.Compile(`(\d+\.){3}\d+`)
@@ -268,7 +272,7 @@ func publicHosts() []string {
 					ip = strings.Split(ip, "/")[0]
 				}
 				if r.Match([]byte(ip)) {
-					ips = append(ips, ip + ":" + strconv.Itoa(reloadCfg.port))
+					ips = append(ips, ip+":"+strconv.Itoa(reloadCfg.port))
 				}
 			}
 		}
@@ -318,7 +322,7 @@ func formatSize(file os.FileInfo) string {
 func dirList(w http.ResponseWriter, f *os.File) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if dirs, err := f.Readdir(-1); err == nil {
-		files := make([]map[string]string, len(dirs) + 1)
+		files := make([]map[string]string, len(dirs)+1)
 		files[0] = map[string]string{
 			"name": "..", "href": "..",
 		}
@@ -327,7 +331,7 @@ func dirList(w http.ResponseWriter, f *os.File) {
 			if d.IsDir() {
 				href += "/"
 			}
-			files[i + 1] = map[string]string{
+			files[i+1] = map[string]string{
 				"name":  d.Name(),
 				"href":  href,
 				"size":  formatSize(d),
@@ -335,9 +339,9 @@ func dirList(w http.ResponseWriter, f *os.File) {
 			}
 		}
 		reloadCfg.dirListTmpl.Execute(w, map[string]interface{}{
-				"dir":   f.Name(),
-				"files": files,
-			})
+			"dir":   f.Name(),
+			"files": files,
+		})
 	}
 }
 
@@ -365,11 +369,10 @@ func reloadHandler(w http.ResponseWriter, path string, req *http.Request) {
 	}
 }
 
-func shouldAppendScript(ctype string, path string) bool {
+func appendReloadHook(w http.ResponseWriter, ctype string, req *http.Request) {
 	if strings.HasPrefix(ctype, "text/html") {
-		return true;
+		w.Write([]byte("<script src=\"//" + req.Host + "/_d/js\"></script>"))
 	}
-	return false;
 }
 
 func fileHandler(w http.ResponseWriter, path string, req *http.Request) {
@@ -400,9 +403,43 @@ func fileHandler(w http.ResponseWriter, path string, req *http.Request) {
 		}
 		w.WriteHeader(200)
 		io.Copy(w, f)
-		if shouldAppendScript(ctype, path) {
-			w.Write([]byte("<script src=\"//" + req.Host + "/_d/js\"></script>"))
+		appendReloadHook(w, ctype, req)
+	}
+}
+
+// proxy dynamic website, add the reload hook if HTML
+func proxyHandler(w http.ResponseWriter, req *http.Request) {
+	host := "http://127.0.0.1:" + strconv.Itoa(reloadCfg.proxy)
+	url := host + req.URL.String()
+	client := &http.Client{}
+	if request, err := http.NewRequest(req.Method, url, req.Body); err == nil {
+		request.Header.Add("X-Forwarded-For", strings.Split(req.RemoteAddr, ":")[0])
+		request.Header.Add("Host", host)
+		for k, values := range req.Header {
+			for _, v := range values {
+				if k != "Host" {
+					request.Header.Add(k, v)
+				}
+			}
 		}
+		if resp, err := client.Do(request); err == nil {
+			for k, values := range resp.Header {
+				for _, v := range values {
+					// Transfer-Encoding:chunked, for append reload hook
+					if k != "Content-Length" {
+						w.Header().Add(k, v)
+					}
+				}
+			}
+			defer resp.Body.Close()
+			w.WriteHeader(resp.StatusCode)
+			io.Copy(w, resp.Body)
+			appendReloadHook(w, w.Header().Get("Content-Type"), req)
+		} else {
+			showDoc(w, req, err) // remote may refuse connection
+		}
+	} else {
+		log.Fatal(err)
 	}
 }
 
@@ -410,15 +447,17 @@ func handler(w http.ResponseWriter, req *http.Request) {
 	path := req.URL.Path
 	if len(path) > 3 && path[0:3] == "/_d" {
 		reloadHandler(w, path[3:], req)
-	} else {
+	} else if reloadCfg.proxy == 0 {
 		fileHandler(w, path[1:], req)
+	} else {
+		proxyHandler(w, req)
 	}
 }
 
 func startMonitorFs() {
 	files := getAllFileMeta()
 	for {
-		time.Sleep(100*time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 		events := make([]FileEvent, 0)
 		tmp := getAllFileMeta()
 		for file, mTime := range tmp {
@@ -474,17 +513,17 @@ func processFsEvents() {
 			args := make([]string, len(events)*2)
 			for i, e := range events {
 				args[2*i] = e.Event
-				args[2*i + 1] = e.File
+				args[2*i+1] = e.File
 			}
 			sub := exec.Command(command, args...)
 			var out bytes.Buffer
 			sub.Stdout = &out
 			err := sub.Run()
 			if err == nil {
-				log.Println("run " + command + " ok; output: ", out.String())
+				log.Println("run "+command+" ok; output: ", out.String())
 				notifyBrowsers()
 			} else {
-				log.Println("ERROR running " + command, err)
+				log.Println("ERROR running "+command, err)
 			}
 		} else {
 			notifyBrowsers()
@@ -494,10 +533,11 @@ func processFsEvents() {
 
 func main() {
 	flag.IntVar(&(reloadCfg.port), "port", 8000, "Which port to listen")
-	flag.StringVar(&(reloadCfg.root), "root", ".", "Directory root been watched")
+	flag.StringVar(&(reloadCfg.root), "root", ".", "Watched root directory for filesystem events, also the HTTP File Server's root directory")
 	flag.StringVar(&(reloadCfg.command), "command", "", "Command to run before reload browser, useful for preprocess, like compile scss. The files been chaneged, along with event type are pass as arguments")
-	flag.StringVar(&(reloadCfg.ignores), "ignores", "", "Ignored file pattens, seprated by ','")
-	flag.BoolVar(&(reloadCfg.private), "private", false, "Only listen on lookback interface")
+	flag.StringVar(&(reloadCfg.ignores), "ignores", "", "Ignored file pattens, seprated by ',', used to ignore the filesystem events of some files")
+	flag.BoolVar(&(reloadCfg.private), "private", false, "Only listen on lookback interface, otherwise listen on all interface")
+	flag.IntVar(&(reloadCfg.proxy), "proxy", 0, "Local dynamic site's port number, like 8080, HTTP watcher proxy it, automatically reload browsers when watched directory's file changed")
 	flag.Parse()
 
 	if _, e := os.Open(reloadCfg.command); e == nil {
