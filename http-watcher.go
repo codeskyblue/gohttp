@@ -335,6 +335,7 @@ func reloadHandler(w http.ResponseWriter, path string, req *http.Request) {
 	switch path {
 	case "/js":
 		w.Header().Add("Content-Type", "text/javascript")
+		w.Header().Add("Cache-Control", "no-cache")
 		reloadCfg.reloadJs.Execute(w, req.Host)
 	case "/polling":
 		hj, ok := w.(http.Hijacker)
@@ -485,7 +486,10 @@ func notifyBrowsers() {
 	defer reloadCfg.mu.Unlock()
 	for _, c := range reloadCfg.clients {
 		defer c.conn.Close()
-		c.buf.Write([]byte("HTTP/1.1 200 OK\r\nContent-Type: text/javascript\r\n\r\nlocation.reload(true);"))
+		reload := "HTTP/1.1 200 OK\r\n"
+		reload += "Cache-Control: no-cache\r\nContent-Type: text/javascript\r\n\r\n"
+		reload += "location.reload(true);"
+		c.buf.Write([]byte(reload))
 		c.buf.Flush()
 	}
 	reloadCfg.clients = make([]Client, 0)
