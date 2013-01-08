@@ -7,6 +7,11 @@ fi
 
 # this script is runned with CWD = root param passed to http-watcher
 
+notify_changed() {
+    # ping server, server knows how to reload the file
+    wget http://127.0.0.1:8000/dev/changed?f=$1 -O -
+}
+
 # [event file]+ pair are passed as command line args
 while [ $# -ne 0 ]; do
     event=$1; shift             # event name
@@ -34,12 +39,13 @@ while [ $# -ne 0 ]; do
                 --remove-style-attr \
                 --simple-bool-attr \
                 --remove-intertag-spaces $file -o $target
+            notify_changed $file
             ;;
-            #TODO tell server to reload the template
         clj)
-            #TODO hotswap code
+            notify_changed $file
             ;;
     esac
 done
 
-# http-watcher -root ~/workspace/rssminer  -ignores "test/,\.css$,.#,src/templates" -proxy 9090 -command ./preprocess
+# For rssminer
+# http-watcher -root ~/workspace/rssminer -ignores "test/,/\.,\.css$,.#,src/templates,target/,public/,android/" -proxy 9090 -command ./preprocess
