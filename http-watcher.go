@@ -472,14 +472,19 @@ func compilePattens() {
 	reloadCfg.mu.Lock()
 	defer reloadCfg.mu.Unlock()
 	ignores := strings.Split(reloadCfg.ignores, ",")
-	reloadCfg.ignorePattens = make([]*regexp.Regexp, 0)
+	// ignore hidden file and emacs generated file
+	ignores = append(ignores, `/\.[^/]+`, `/#\.[^/]+`)
+	pattens := make([]*regexp.Regexp, 0)
 	for _, s := range ignores {
 		if len(s) > 0 {
 			if p, e := regexp.Compile(s); e == nil {
-				reloadCfg.ignorePattens = append(reloadCfg.ignorePattens, p)
+				pattens = append(pattens, p)
+			} else {
+				log.Println("ERROR: can not compile to regex", s, e)
 			}
 		}
 	}
+	reloadCfg.ignorePattens = pattens
 }
 
 func notifyBrowsers() {
@@ -537,12 +542,11 @@ func main() {
 		reloadCfg.command = abs
 	}
 
+	// compile templates
 	t, _ := template.New("reloadjs").Parse(RELOAD_JS)
 	reloadCfg.reloadJs = t
-
 	t, _ = template.New("dirlist").Parse(DIR_HTML)
 	reloadCfg.dirListTmpl = t
-
 	t, _ = template.New("doc").Parse(HELP_HTML)
 	reloadCfg.docTmpl = t
 
