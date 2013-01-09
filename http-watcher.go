@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"mime"
+	"fmt"
 	"net"
 	"net/http"
 	"os"
@@ -294,9 +295,9 @@ func formatSize(file os.FileInfo) string {
 	size := int(file.Size())
 	switch {
 	case size > 1024*1024:
-		return strconv.Itoa(size/1024/1024) + "M"
+		return fmt.Sprintf("%.1fM", float64(size)/1024/1024)
 	case size > 1024:
-		return strconv.Itoa(size/1024) + "K"
+		return fmt.Sprintf("%.1fk", float64(size)/1024)
 	default:
 		return strconv.Itoa(size)
 	}
@@ -441,11 +442,14 @@ func handler(w http.ResponseWriter, req *http.Request) {
 
 func startMonitorFs() {
 	files := getAllFileMeta()
+	n := strconv.Itoa(len(files))
 	if len(files) > 1000 {
-		log.Println("WARN: directory has too many files: " + strconv.Itoa(len(files)) + "; if CPU usage is high, try tweak -ignores param")
+		log.Println("WARN: directory has too many files:", n, "; if CPU usage is high, try tweak -ignores param")
+	} else {
+		log.Println(n, "files been watched for change, check interval 150ms")
 	}
 	for {
-		time.Sleep(180 * time.Millisecond)
+		time.Sleep(150 * time.Millisecond)
 		events := make([]FileEvent, 0)
 		tmp := getAllFileMeta()
 		for file, mTime := range tmp {
@@ -562,7 +566,11 @@ func main() {
 
 	int := ":" + strconv.Itoa(reloadCfg.port)
 	p := strconv.Itoa(reloadCfg.port)
-	mesg := "; please visit http://127.0.0.1:" + p
+	mesg := ""
+	if reloadCfg.proxy != 0 {
+		mesg += "; proxy site http://127.0.0.1:" + strconv.Itoa(reloadCfg.proxy)
+	}
+	mesg += "; please visit http://127.0.0.1:" + p
 	if reloadCfg.private {
 		int = "localhost" + int
 		log.Printf("listens on 127.0.0.1@" + p + mesg)
