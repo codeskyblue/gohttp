@@ -373,6 +373,7 @@ func main() {
 	flag.StringVar(&(reloadCfg.ignores), "ignores", "", "Ignored file pattens, seprated by ',', used to ignore the filesystem events of some files")
 	flag.BoolVar(&(reloadCfg.private), "private", false, "Only listen on lookback interface, otherwise listen on all interface")
 	flag.IntVar(&(reloadCfg.proxy), "proxy", 0, "Local dynamic site's port number, like 8080, HTTP watcher proxy it, automatically reload browsers when watched directory's file changed")
+	monitor := flag.Bool("monitor", true, "Enable monitor filesystem event")
 	flag.Parse()
 
 	if _, e := os.Open(reloadCfg.command); e == nil {
@@ -394,9 +395,11 @@ func main() {
 	if e := os.Chdir(reloadCfg.root); e != nil {
 		log.Panic(e)
 	}
-	go startMonitorFs()
-	go processFsEvents()
-
+	if *monitor {
+		log.Println("start polling filesystem for events")
+		go startMonitorFs()
+		go processFsEvents()
+	}
 	http.HandleFunc("/", handler)
 
 	int := ":" + strconv.Itoa(reloadCfg.port)
