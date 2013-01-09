@@ -10,7 +10,7 @@ HTTP file Server + HTTP proxy + Directory Watcher: Wacher directory for change, 
 ### build
 
 ```sh
-  go build http-watcher.go
+  go build
 ```
 
 ### Usage
