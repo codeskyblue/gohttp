@@ -1,16 +1,15 @@
 # HTTP Watcher
 
-Focus on design and code. Hit F5 when needed for you, automatically.
-
-No copy and paste javascript, http-watcher add the reload hook automatically.
+A tool that automatically reload browsers when file changed, let your focus on design and coding.
+No copy and paste javascript code needed, just start `http-watcher`, everything works as expected
 
 >
-HTTP file Server + HTTP proxy + Directory Watcher: Wacher directory for change, automatically reload connected bowsers. Works for both static and dynamic web project.
+HTTP file Server + HTTP proxy + Directory Watcher: automatically reload connected bowsers when file changed, Works for both static and dynamic web project.
 
 ### build
 
 ```sh
-  go build
+  go build  # you may want to copy http-watcher binary to $PATH for easy use. prebuilt binary comming soon
 ```
 
 ### Usage
@@ -21,6 +20,7 @@ http-watcher args  # accepted args list below
 ```sh
   -command="": Command to run before reload browser, useful for preprocess, like compile scss. The files been chaneged, along with event type are pass as arguments
   -ignores="": Ignored file pattens, seprated by ',', used to ignore the filesystem events of some files
+  -monitor=true: Enable monitor filesystem event
   -port=8000: Which port to listen
   -private=false: Only listen on lookback interface, otherwise listen on all interface
   -proxy=0: Local dynamic site's port number, like 8080, HTTP watcher proxy it, automatically reload browsers when watched directory's file changed
@@ -56,10 +56,15 @@ also accept -command=$SCRIPT_PATH to do some preprocessing before reload browser
 
 `http-watcher` acts as a proxy in this configration
 
+### HTTP file server, no filesystem monitoring
+
+with arg : -monitor=false
+
 ### The CPU usage is high
 
 http-watcher is currently polling filesystem for event. When the directory is large, it may eat CPU
-add more ignore pattens to filter files will make it lower
+Adding more ignore pattens to filter files will make it lower
 
 ### TODO
-Use kqueue for OS X, inotify for Windows for better performance
+
+Use fsnotify to scale to large directory?
