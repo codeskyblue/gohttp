@@ -1,7 +1,10 @@
 # HTTP Watcher
 
-A tool that automatically reload browsers when file changed, let your focus on design and coding.
-No copy and paste javascript code needed, just start `http-watcher`, everything works as expected
+A Web Server for Web developers!
+
+A server that automatically reload browsers when file changed, let developers focus on design and coding.
+
+No copy and paste javascript code needed, just start `http-watcher`, that's all.
 
 >
 HTTP file Server + HTTP proxy + Directory Watcher: automatically reload connected bowsers when file changed, Works for both static and dynamic web project.
