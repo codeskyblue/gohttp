@@ -127,14 +127,14 @@ func formatSize(file os.FileInfo) string {
 	if file.IsDir() {
 		return "-"
 	}
-	size := int(file.Size())
+	size := file.Size()
 	switch {
 	case size > 1024*1024:
 		return fmt.Sprintf("%.1fM", float64(size)/1024/1024)
 	case size > 1024:
 		return fmt.Sprintf("%.1fk", float64(size)/1024)
 	default:
-		return strconv.Itoa(size)
+		return strconv.Itoa(int(size))
 	}
 	return ""
 }
