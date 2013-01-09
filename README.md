@@ -1,9 +1,11 @@
 # HTTP Watcher
 
-Focus on design and code. Hit F5 when needed for you, automatically
+Focus on design and code. Hit F5 when needed for you, automatically.
+
+No copy and paste javascript, http-watcher add the reload hook automatically.
 
 >
-HTTP file Server + HTTP proxy + Directory Watcher: Wacher directory for change, automatically reload connected bowsers. Works for both HTML + CSS + JS and dynamic web project
+HTTP file Server + HTTP proxy + Directory Watcher: Wacher directory for change, automatically reload connected bowsers. Works for both static and dynamic web project.
 
 ### build
 
@@ -56,5 +58,8 @@ also accept -command=$SCRIPT_PATH to do some preprocessing before reload browser
 
 ### The CPU usage is high
 
-http-watcher is currently polling filesystem for event. When the directory is large, it may eat the CPU
-try to add more ignore pattens will make it lower
+http-watcher is currently polling filesystem for event. When the directory is large, it may eat CPU
+add more ignore pattens to filter files will make it lower
+
+### TODO
+Use kqueue for OS X, inotify for Windows for better performance
