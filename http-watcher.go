@@ -45,6 +45,7 @@ type ReloadMux struct {
 	clients       []Client
 	private       bool
 	proxy         int
+	monitor       bool
 }
 
 var reloadCfg = ReloadMux{
@@ -191,7 +192,7 @@ func reloadHandler(w http.ResponseWriter, path string, req *http.Request) {
 }
 
 func appendReloadHook(w http.ResponseWriter, ctype string, req *http.Request) {
-	if strings.HasPrefix(ctype, "text/html") {
+	if reloadCfg.monitor && strings.HasPrefix(ctype, "text/html") {
 		w.Write([]byte("<script src=\"//" + req.Host + "/_d/js\"></script>"))
 	}
 }
@@ -373,7 +374,7 @@ func main() {
 	flag.StringVar(&(reloadCfg.ignores), "ignores", "", "Ignored file pattens, seprated by ',', used to ignore the filesystem events of some files")
 	flag.BoolVar(&(reloadCfg.private), "private", false, "Only listen on lookback interface, otherwise listen on all interface")
 	flag.IntVar(&(reloadCfg.proxy), "proxy", 0, "Local dynamic site's port number, like 8080, HTTP watcher proxy it, automatically reload browsers when watched directory's file changed")
-	monitor := flag.Bool("monitor", true, "Enable monitor filesystem event")
+	flag.BoolVar(&(reloadCfg.monitor), "monitor", true, "Enable monitor filesystem event")
 	flag.Parse()
 
 	if _, e := os.Open(reloadCfg.command); e == nil {
@@ -395,7 +396,7 @@ func main() {
 	if e := os.Chdir(reloadCfg.root); e != nil {
 		log.Panic(e)
 	}
-	if *monitor {
+	if reloadCfg.monitor {
 		log.Println("start polling filesystem for events")
 		go startMonitorFs()
 		go processFsEvents()
