@@ -233,18 +233,16 @@ func fileHandler(w http.ResponseWriter, path string, req *http.Request) {
 func proxyHandler(w http.ResponseWriter, req *http.Request) {
 	host := "http://127.0.0.1:" + strconv.Itoa(reloadCfg.proxy)
 	url := host + req.URL.String()
-	client := &http.Client{}
 	if request, err := http.NewRequest(req.Method, url, req.Body); err == nil {
 		request.Header.Add("X-Forwarded-For", strings.Split(req.RemoteAddr, ":")[0])
-		request.Header.Add("Host", host)
+		// Host is removed from req.Header by go
 		for k, values := range req.Header {
 			for _, v := range values {
-				if k != "Host" {
-					request.Header.Add(k, v)
-				}
+				request.Header.Add(k, v)
 			}
 		}
-		if resp, err := client.Do(request); err == nil {
+		// do not follow any redirect， browser will do that
+		if resp, err := http.DefaultTransport.RoundTrip(request); err == nil {
 			for k, values := range resp.Header {
 				for _, v := range values {
 					// Transfer-Encoding:chunked, for append reload hook
@@ -253,6 +251,7 @@ func proxyHandler(w http.ResponseWriter, req *http.Request) {
 					}
 				}
 			}
+			// Host is set by go
 			defer resp.Body.Close()
 			w.WriteHeader(resp.StatusCode)
 			io.Copy(w, resp.Body)
