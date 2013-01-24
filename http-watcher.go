@@ -247,6 +247,8 @@ func proxyHandler(w http.ResponseWriter, req *http.Request) {
 				request.Header.Add(k, v)
 			}
 		}
+		request.ContentLength = req.ContentLength
+		request.Close = true
 		// do not follow any redirect， browser will do that
 		if resp, err := http.DefaultTransport.RoundTrip(request); err == nil {
 			for k, values := range resp.Header {
