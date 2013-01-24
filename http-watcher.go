@@ -221,6 +221,12 @@ func fileHandler(w http.ResponseWriter, path string, req *http.Request) {
 	} else {
 		ctype := mime.TypeByExtension(filepath.Ext(path))
 		if ctype != "" {
+			// go return charset=utf8 even if the charset is not utf8
+			idx := strings.Index(ctype, "; ")
+			if(idx > 0) {
+				// remove charset; anyway, browsers are very good at guessing it.
+				ctype = ctype[0:idx]
+			}
 			w.Header().Set("Content-Type", ctype)
 		}
 		w.WriteHeader(200)
