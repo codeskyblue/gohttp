@@ -1,6 +1,6 @@
 # HTTP Watcher
 
-A server that automatically reload browsers when file changed, helper developers focus on coding.
+A server that automatically reload browsers when file changed, help developers focus on coding.
 
 No copy and paste javascript code needed, just start `http-watcher`, that's all.
 
@@ -16,7 +16,7 @@ Web Server for Web developers! HTTP Watcher = HTTP file Server + HTTP proxy + Di
 ### Usage
 
 ```sh
-http-watcher args  # accepted args list below
+http-watcher args  # acceptable args list below, -h to show them
 ```
 ```sh
   -command="": Command to run before reload browser, useful for preprocess, like compile scss. The files been chaneged, along with event type are pass as arguments
@@ -66,6 +66,3 @@ with arg : -monitor=false
 http-watcher is currently polling filesystem for event. When the directory is large, it may eat CPU
 Adding more ignore pattens to filter files will make it lower
 
-### TODO
-
-Use fsnotify to scale to large directory?
