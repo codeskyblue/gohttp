@@ -4,24 +4,22 @@ const (
 	MODIFY    = "MODIFY"
 	ADD       = "ADD"
 	REMOVE    = "REMOVE"
-	RELOAD_JS = `
-(function () {
-  setTimeout(function () {
-    var head = document.getElementsByTagName('head')[0] || document.body;
+	RELOAD_JS = `(function () {
+  var added = false;
+  function add_js () {
+    if(added) { return; }
     var js = document.createElement('script');
-    js.type = 'text/javascript';
-    js.async = true;
     js.src = "http://{{.}}/_d/polling";
-    var s = document.getElementsByTagName('script')[0];
-    if(s) {
-      s.parentNode.insertBefore(js, s);
-    } else {
-      document.body.appendChild(js);
-    }
+    var scripts = document.getElementsByTagName('script'),
+        s = scripts[scripts.length - 1];
+    s.parentNode.insertBefore(js, s);
     if(window.console && console.log) {
-       console.log("http-watcher reload connected")
+      console.log("http-watcher reload connected");
     }
-  }, 300);
+    added = true;
+  }
+  window.onload = add_js;
+  setTimeout(add_js, 1500);
 })();`
 	DIR_HTML = `<!doctype html>
 <html>
