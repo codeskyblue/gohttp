@@ -145,14 +145,7 @@ const (
       {{end}}
     </ul>
     <h3>Command Help</h3>
-    <pre>
--command="": Command to run before reload browser, useful for preprocess, like compile scss. The files been chaneged, along with event type are pass as arguments
--ignores="": Ignored file pattens, seprated by ',', used to ignore the filesystem events of some files
--port=8000: Which port to listen
--private=false: Only listen on lookback interface, otherwise listen on all interface
--proxy=0: Local dynamic site's port number, like 8080, HTTP watcher proxy it, automatically reload browsers when watched directory's file changed
--root=".": Watched root directory for filesystem events, also the HTTP File Server's root directory
-    </pre>
+    <pre>http-watcher -h</pre>
     </div>
     <div id="footer">
        <a href="https://github.com/shenfeng/http-watcher">http-watcher</a>,
