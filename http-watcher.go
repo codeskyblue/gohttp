@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"bytes"
 	"flag"
-	"github.com/howeyc/fsnotify"
 	"fmt"
+	"github.com/howeyc/fsnotify"
 	"io"
 	"log"
 	"mime"
@@ -45,7 +45,7 @@ type ReloadMux struct {
 }
 
 var reloadCfg = ReloadMux{
-	clients:  make([]Client, 0),
+	clients: make([]Client, 0),
 }
 
 func shouldIgnore(path string) bool {
@@ -218,7 +218,7 @@ func fileHandler(w http.ResponseWriter, path string, req *http.Request) {
 		if ctype != "" {
 			// go return charset=utf8 even if the charset is not utf8
 			idx := strings.Index(ctype, "; ")
-			if(idx > 0) {
+			if idx > 0 {
 				// remove charset; anyway, browsers are very good at guessing it.
 				ctype = ctype[0:idx]
 			}
@@ -288,10 +288,16 @@ func startMonitorFs() {
 			if err != nil { // TODO permisstion denyed
 			}
 			ignore := shouldIgnore(path)
+			if ignore && info.IsDir() {
+				log.Println("ignore dir", path)
+				return filepath.SkipDir
+			}
 			if info.IsDir() && !ignore {
 				err = watcher.Watch(path)
 				if err != nil {
 					log.Fatal(err)
+				} else {
+					log.Println("monitoring dir", path)
 				}
 			}
 			return nil
@@ -339,12 +345,23 @@ func processFsEvents() {
 	for {
 		select {
 		case ev := <-reloadCfg.fsWatcher.Event:
-			fi, e := os.Lstat(ev.Name)
-			if e != nil {
-				log.Println(e)
-			} else if fi.IsDir() {
-				reloadCfg.fsWatcher.Watch(ev.Name)
+			notify := false
+			if ev.IsDelete() {
+				reloadCfg.fsWatcher.RemoveWatch(ev.Name)
+				notify = true
 			} else {
+				fi, e := os.Lstat(ev.Name)
+				if e != nil {
+					log.Println(e)
+				} else if fi.IsDir() {
+					if !shouldIgnore(ev.Name) {
+						reloadCfg.fsWatcher.Watch(ev.Name)
+					}
+				} else {
+					notify = true
+				}
+			}
+			if notify {
 				command := reloadCfg.command
 				if command != "" {
 					args := make([]string, 2)
