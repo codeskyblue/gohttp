@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"flag"
+	"github.com/howeyc/fsnotify"
 	"fmt"
 	"io"
 	"log"
@@ -21,11 +22,6 @@ import (
 	"time"
 )
 
-type FileEvent struct {
-	File  string
-	Event string
-}
-
 type Client struct {
 	buf  *bufio.ReadWriter
 	conn net.Conn
@@ -38,7 +34,6 @@ type ReloadMux struct {
 	ignorePattens []*regexp.Regexp
 	command       string
 	root          string
-	eventsCh      chan []FileEvent
 	reloadJs      *template.Template
 	dirListTmpl   *template.Template
 	docTmpl       *template.Template
@@ -46,10 +41,10 @@ type ReloadMux struct {
 	private       bool
 	proxy         int
 	monitor       bool
+	fsWatcher     *fsnotify.Watcher
 }
 
 var reloadCfg = ReloadMux{
-	eventsCh: make(chan []FileEvent),
 	clients:  make([]Client, 0),
 }
 
@@ -284,33 +279,25 @@ func handler(w http.ResponseWriter, req *http.Request) {
 }
 
 func startMonitorFs() {
-	files := getAllFileMeta()
-	n := strconv.Itoa(len(files))
-	if len(files) > 1000 {
-		log.Println("WARN: directory has too many files:", n, "; if CPU usage is high, try tweak -ignores param")
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatal(err)
 	} else {
-		log.Println(n, "files been watched for change, check interval 150ms")
-	}
-	for {
-		time.Sleep(150 * time.Millisecond)
-		events := make([]FileEvent, 0)
-		tmp := getAllFileMeta()
-		for file, mTime := range tmp {
-			if oldTime, exits := files[file]; exits {
-				if oldTime.Before(mTime) {
-					events = append(events, FileEvent{file, MODIFY})
-				}
-				delete(files, file)
-			} else {
-				events = append(events, FileEvent{file, ADD})
+		reloadCfg.fsWatcher = watcher
+		walkFn := func(path string, info os.FileInfo, err error) error {
+			if err != nil { // TODO permisstion denyed
 			}
+			ignore := shouldIgnore(path)
+			if info.IsDir() && !ignore {
+				err = watcher.Watch(path)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+			return nil
 		}
-		for file, _ := range files {
-			events = append(events, FileEvent{file, REMOVE})
-		}
-		files = tmp
-		if len(events) > 0 {
-			reloadCfg.eventsCh <- events
+		if err := filepath.Walk(reloadCfg.root, walkFn); err != nil {
+			log.Println(err)
 		}
 	}
 }
@@ -350,26 +337,38 @@ func notifyBrowsers() {
 
 func processFsEvents() {
 	for {
-		events := <-reloadCfg.eventsCh
-		command := reloadCfg.command
-		if command != "" {
-			args := make([]string, len(events)*2)
-			for i, e := range events {
-				args[2*i] = e.Event
-				args[2*i+1] = e.File
-			}
-			sub := exec.Command(command, args...)
-			var out bytes.Buffer
-			sub.Stdout = &out
-			err := sub.Run()
-			if err == nil {
-				log.Println("run "+command+" ok; output: ", out.String())
-				notifyBrowsers()
+		select {
+		case ev := <-reloadCfg.fsWatcher.Event:
+			fi, e := os.Lstat(ev.Name)
+			if e != nil {
+				log.Println(e)
+			} else if fi.IsDir() {
+				reloadCfg.fsWatcher.Watch(ev.Name)
 			} else {
-				log.Println("ERROR running "+command, err)
+				command := reloadCfg.command
+				if command != "" {
+					args := make([]string, 2)
+					args[1] = ev.Name
+					args[0] = MODIFY
+					if ev.IsCreate() {
+						args[0] = ADD
+					} else if ev.IsDelete() {
+						args[0] = REMOVE
+					}
+					sub := exec.Command(command, args...)
+					var out bytes.Buffer
+					sub.Stdout = &out
+					err := sub.Run()
+					if err == nil {
+						log.Println("run "+command+" ok; output: ", out.String())
+						notifyBrowsers()
+					} else {
+						log.Println("ERROR running "+command, err)
+					}
+				} else {
+					notifyBrowsers()
+				}
 			}
-		} else {
-			notifyBrowsers()
 		}
 	}
 }
@@ -404,8 +403,7 @@ func main() {
 		log.Panic(e)
 	}
 	if reloadCfg.monitor {
-		log.Println("start polling filesystem for events")
-		go startMonitorFs()
+		startMonitorFs()
 		go processFsEvents()
 	}
 	http.HandleFunc("/", handler)

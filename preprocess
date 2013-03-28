@@ -33,6 +33,7 @@ while [ $# -ne 0 ]; do
     event=$1; shift             # event name
     file=$1; shift              # file name
     extention=${file##*.}       # file extension
+    echo $file $event
     case $extention in
         scss) # compile scss to css
             mkdir -p public/css/

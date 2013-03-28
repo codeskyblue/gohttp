@@ -10,6 +10,7 @@ Web Server for Web developers! HTTP Watcher = HTTP file Server + HTTP proxy + Di
 ### build
 
 ```sh
+  # go get github.com/howeyc/fsnotify
   go build  # you may want to copy http-watcher binary to $PATH for easy use. prebuilt binary comming soon
 ```
 
@@ -30,39 +31,20 @@ http-watcher args  # acceptable args list below, -h to show them
 
 ### HTML + JS + CSS (static web project)
 
-Start `http-watcher` with -root=$PROJECT_ROOT -port $PORT_NUMBER
+```sh
+http-watcher -port 8000 -root /your/code/root
+```
 
-where
+### Dynamic web site: Clojure, golang, Python, JAVA
 
-* `PROJECT_ROOT` : the static web project's root directory, where `http-watcher` watch for filesystem events (MODIFY, ADD, REMOVE). Default: current directory
-* `PORT_NUMBER` : which port `http-watcher` listens. Default: 8000
-
-Now visit: [http://127.0.0.1:8000](http://127.0.0.1:800), if you take the default PORT_NUMBER
-
-### Dynamic web site: Clojure, golang, Python, JAVA, etc project
-
-Start `http-watcher` with -proxy=$PROXY_PORT -root=$PROJECT_ROOT -port $PORT_NUMBER
-
-Where
-
-* `PROXY_PORT` : the port the dynamic web project is listened on
-* `PROJECT_ROOT` : the dynamic web project's root directory, where `http-watcher` watch for filesystem events (MODIFY, ADD, REMOVE). Default: current directory
-* `PORT_NUMBER` : which port `http-watcher` listen. Default: 8000
-
-Now visit: [http://127.0.0.1:8000](http://127.0.0.1:800), if you take the default PORT_NUMBER
-
-also accept -ignores='regexp1,regexp2,regexp3' to ignore centain files
-
-also accept -command=$SCRIPT_PATH to do some preprocessing before reload browsers. Take `preprocess` script as an example
-
-`http-watcher` acts as a proxy in this configration
-
+```sh
+# your dynamic site listen on 9090
+# http-watcher act as a proxy
+http-watcher -port 8000 -root /your/code/root -proxy=9090 -ignores test/,classes
+```
 ### HTTP file server, no filesystem monitoring
 
-with arg : -monitor=false
-
-### The CPU usage is high
-
-http-watcher is currently polling filesystem for event. When the directory is large, it may eat CPU
-Adding more ignore pattens to filter files will make it lower
-
+```sh
+# like python -m SimpleHTTPServer, should handle concurrency better
+http-watcher -monitor=false
+```
