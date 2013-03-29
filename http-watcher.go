@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -48,12 +49,19 @@ var reloadCfg = ReloadMux{
 	clients: make([]Client, 0),
 }
 
-func shouldIgnore(path string) bool {
+func shouldIgnore(file string) bool {
 	for _, p := range reloadCfg.ignorePattens {
-		if p.Find([]byte(path)) != nil {
+		if p.Find([]byte(file)) != nil {
 			return true
 		}
 	}
+
+	base := path.Base(file)
+	// ignore hidden file and emacs generated file
+	if len(base) > 1 && (strings.HasPrefix(base, ".") || strings.HasPrefix(base, "#")) {
+		return true
+	}
+
 	return false
 }
 
@@ -312,8 +320,6 @@ func compilePattens() {
 	reloadCfg.mu.Lock()
 	defer reloadCfg.mu.Unlock()
 	ignores := strings.Split(reloadCfg.ignores, ",")
-	// ignore hidden file and emacs generated file
-	ignores = append(ignores, `/\.[^/]+`, `/#\.[^/]+`)
 	pattens := make([]*regexp.Regexp, 0)
 	for _, s := range ignores {
 		if len(s) > 0 {
@@ -341,36 +347,40 @@ func notifyBrowsers() {
 	reloadCfg.clients = make([]Client, 0)
 }
 
+// remove duplicate, and file name contains #
+func cleanEvents(events []*fsnotify.FileEvent) []*fsnotify.FileEvent {
+	m := map[*fsnotify.FileEvent]bool{}
+	for _, v := range events {
+		if _, seen := m[v]; !seen {
+			base := path.Base(v.Name)
+			if !strings.Contains(base, "#") {
+				events[len(m)] = v
+				m[v] = true
+			}
+		}
+	}
+	return events[:len(m)]
+}
+
 func processFsEvents() {
+	events := make([]*fsnotify.FileEvent, 0)
+	timer := time.Tick(80 * time.Millisecond)
 	for {
 		select {
-		case ev := <-reloadCfg.fsWatcher.Event:
-			notify := false
-			if ev.IsDelete() {
-				reloadCfg.fsWatcher.RemoveWatch(ev.Name)
-				notify = true
-			} else {
-				fi, e := os.Lstat(ev.Name)
-				if e != nil {
-					log.Println(e)
-				} else if fi.IsDir() {
-					if !shouldIgnore(ev.Name) {
-						reloadCfg.fsWatcher.Watch(ev.Name)
-					}
-				} else {
-					notify = true
-				}
-			}
-			if notify {
+		case <-timer: //  combine event
+			events = cleanEvents(events)
+			if len(events) > 0 {
 				command := reloadCfg.command
 				if command != "" {
-					args := make([]string, 2)
-					args[1] = ev.Name
-					args[0] = MODIFY
-					if ev.IsCreate() {
-						args[0] = ADD
-					} else if ev.IsDelete() {
-						args[0] = REMOVE
+					args := make([]string, len(events)*2)
+					for i, e := range events {
+						args[2*i] = MODIFY
+						if e.IsCreate() {
+							args[2*i] = ADD
+						} else if e.IsDelete() {
+							args[2*i] = REMOVE
+						}
+						args[2*i+1] = e.Name
 					}
 					sub := exec.Command(command, args...)
 					var out bytes.Buffer
@@ -384,6 +394,22 @@ func processFsEvents() {
 					}
 				} else {
 					notifyBrowsers()
+				}
+			}
+		case ev := <-reloadCfg.fsWatcher.Event:
+			if ev.IsDelete() {
+				reloadCfg.fsWatcher.RemoveWatch(ev.Name)
+				events = append(events, ev)
+			} else {
+				fi, e := os.Lstat(ev.Name)
+				if e != nil {
+					log.Println(e)
+				} else if fi.IsDir() {
+					if !shouldIgnore(ev.Name) {
+						reloadCfg.fsWatcher.Watch(ev.Name)
+					}
+				} else {
+					events = append(events, ev)
 				}
 			}
 		}
