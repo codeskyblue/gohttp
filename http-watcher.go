@@ -349,13 +349,13 @@ func notifyBrowsers() {
 
 // remove duplicate, and file name contains #
 func cleanEvents(events []*fsnotify.FileEvent) []*fsnotify.FileEvent {
-	m := map[*fsnotify.FileEvent]bool{}
+	m := map[string]bool{}
 	for _, v := range events {
-		if _, seen := m[v]; !seen {
+		if _, seen := m[v.Name]; !seen {
 			base := path.Base(v.Name)
 			if !strings.Contains(base, "#") {
 				events[len(m)] = v
-				m[v] = true
+				m[v.Name] = true
 			}
 		}
 	}
@@ -382,6 +382,7 @@ func processFsEvents() {
 						}
 						args[2*i+1] = e.Name
 					}
+					events = make([]*fsnotify.FileEvent, 0)
 					sub := exec.Command(command, args...)
 					var out bytes.Buffer
 					sub.Stdout = &out
