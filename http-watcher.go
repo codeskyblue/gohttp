@@ -364,10 +364,10 @@ func cleanEvents(events []*fsnotify.FileEvent) []*fsnotify.FileEvent {
 
 func processFsEvents() {
 	events := make([]*fsnotify.FileEvent, 0)
-	timer := time.Tick(80 * time.Millisecond)
+	timer := time.Tick(100 * time.Millisecond)
 	for {
 		select {
-		case <-timer: //  combine event
+		case <-timer: //  combine events
 			events = cleanEvents(events)
 			if len(events) > 0 {
 				command := reloadCfg.command

@@ -18,8 +18,11 @@ const (
     }
     added = true;
   }
-  window.onload = add_js;
-  setTimeout(add_js, 1500);
+
+	setTimeout(function(){
+  	setTimeout(add_js, 600);
+  	window.onload = add_js;
+	}, 600)
 })();`
 	DIR_HTML = `<!doctype html>
 <html>
