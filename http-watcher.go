@@ -382,7 +382,6 @@ func processFsEvents() {
 						}
 						args[2*i+1] = e.Name
 					}
-					events = make([]*fsnotify.FileEvent, 0)
 					sub := exec.Command(command, args...)
 					var out bytes.Buffer
 					sub.Stdout = &out
@@ -396,6 +395,7 @@ func processFsEvents() {
 				} else {
 					notifyBrowsers()
 				}
+				events = make([]*fsnotify.FileEvent, 0)
 			}
 		case ev := <-reloadCfg.fsWatcher.Event:
 			if ev.IsDelete() {
