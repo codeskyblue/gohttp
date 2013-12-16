@@ -43,6 +43,7 @@ type ReloadMux struct {
 	proxy         int
 	monitor       bool
 	fsWatcher     *fsnotify.Watcher
+	delay         float64
 }
 
 var reloadCfg = ReloadMux{
@@ -340,7 +341,7 @@ func notifyBrowsers() {
 		defer c.conn.Close()
 		reload := "HTTP/1.1 200 OK\r\n"
 		reload += "Cache-Control: no-cache\r\nContent-Type: text/javascript\r\n\r\n"
-		reload += "location.reload(true);"
+		reload += fmt.Sprintf("setTimeout(function(){location.reload(true)}, %f*1000);", reloadCfg.delay)
 		c.buf.Write([]byte(reload))
 		c.buf.Flush()
 	}
@@ -425,6 +426,7 @@ func main() {
 	flag.BoolVar(&(reloadCfg.private), "private", false, "Only listen on lookback interface, otherwise listen on all interface")
 	flag.IntVar(&(reloadCfg.proxy), "proxy", 0, "Local dynamic site's port number, like 8080, HTTP watcher proxy it, automatically reload browsers when watched directory's file changed")
 	flag.BoolVar(&(reloadCfg.monitor), "monitor", true, "Enable monitor filesystem event")
+	flag.Float64Var(&(reloadCfg.delay), "delay", 0, "Delay in seconds before reload browser.")
 	flag.Parse()
 
 	if _, e := os.Open(reloadCfg.command); e == nil {
