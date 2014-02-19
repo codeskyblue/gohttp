@@ -411,7 +411,9 @@ func processFsEvents() {
 						reloadCfg.fsWatcher.Watch(ev.Name)
 					}
 				} else {
-					events = append(events, ev)
+					if !shouldIgnore(ev.Name) {
+						events = append(events, ev)
+					}
 				}
 			}
 		}
