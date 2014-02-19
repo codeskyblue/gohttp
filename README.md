@@ -48,3 +48,13 @@ http-watcher -port 8000 -root /your/code/root -proxy=9090 -ignores test/,classes
 # like python -m SimpleHTTPServer, should handle concurrency better
 http-watcher -monitor=false
 ```
+
+### Web browser ###
+
+Add the following HTML code to your `index.html`:
+
+```
+<script src="http://127.0.0.1:8000/_d/js"></script>
+```
+
+Manually reload the page in your browser. The browser Javascript console should display a message like: `http-watcher reload connected`. From that point on, any file changes should cause the page to be automatically reloaded.
