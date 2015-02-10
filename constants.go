@@ -1,29 +1,9 @@
 package main
 
 const (
-	MODIFY    = "MODIFY"
-	ADD       = "ADD"
-	REMOVE    = "REMOVE"
-	RELOAD_JS = `(function () {
-  var added = false;
-  function add_js () {
-    if(added) { return; }
-    var js = document.createElement('script');
-    js.src = "http://{{.}}/_d/polling";
-    var scripts = document.getElementsByTagName('script'),
-        s = scripts[scripts.length - 1];
-    s.parentNode.insertBefore(js, s);
-    if(window.console && console.log) {
-      console.log("http-watcher reload connected");
-    }
-    added = true;
-  }
-
-	setTimeout(function(){
-  	setTimeout(add_js, 600);
-  	window.onload = add_js;
-	}, 600)
-})();`
+	MODIFY   = "MODIFY"
+	ADD      = "ADD"
+	REMOVE   = "REMOVE"
 	DIR_HTML = `<!doctype html>
 <html>
   <head>
@@ -155,4 +135,5 @@ const (
        write by <a href="http://shenfeng.me">Feng Shen</a> in golang,<a href="/_d/doc">doc</a>
     </div>
   </body>
-</html>`)
+</html>`
+)

@@ -1,32 +1,26 @@
-# HTTP Watcher
+# File Static Server
+This is file server writen by golang.
 
-A server that automatically reload browsers when file changed, help developers focus on coding.
+This is a short version of [http-watcher](https://github.com/shenfeng/http-watche)
 
-No copy and paste javascript code needed, just start `http-watcher`, that's all.
-
->
-Web Server for Web developers! HTTP Watcher = HTTP file Server + HTTP proxy + Directory Watcher: automatically reload connected browsers when file changed, works for both static and dynamic web project.
+http-watcher的简化版，除去了其他东西，只保留了文件服务器的东西。
 
 ### build
 
 ```sh
-  # go get github.com/howeyc/fsnotify
+  go clone https://github.com/codeskyblue/file-server
   go build  # you may want to copy http-watcher binary to $PATH for easy use. prebuilt binary comming soon
 ```
 
 ### Usage
 
 ```sh
-http-watcher args  # acceptable args list below, -h to show them
+file-server ARGS  # acceptable args list below, -h to show them
 ```
 ```sh
-  -command="": Command to run before reload browser, useful for preprocess, like compile scss. The files been chaneged, along with event type are pass as arguments
-  -ignores="": Ignored file pattens, seprated by ',', used to ignore the filesystem events of some files
-  -monitor=true: Enable monitor filesystem event
   -port=8000: Which port to listen
   -private=false: Only listen on lookback interface, otherwise listen on all interface
-  -proxy=0: Local dynamic site's port number, like 8080, HTTP watcher proxy it, automatically reload browsers when watched directory's file changed
-  -root=".": Watched root directory for filesystem events, also the HTTP File Server's root directory
+  -root=".": the HTTP File Server's root directory
 ```
 
 ### HTML + JS + CSS (static web project)
@@ -42,19 +36,6 @@ http-watcher -port 8000 -root /your/code/root
 # http-watcher act as a proxy
 http-watcher -port 8000 -root /your/code/root -proxy=9090 -ignores test/,classes
 ```
-### HTTP file server, no filesystem monitoring
 
-```sh
-# like python -m SimpleHTTPServer, should handle concurrency better
-http-watcher -monitor=false
-```
-
-### Web browser ###
-
-Add the following HTML code to your `index.html`:
-
-```
-<script src="http://127.0.0.1:8000/_d/js"></script>
-```
-
-Manually reload the page in your browser. The browser Javascript console should display a message like: `http-watcher reload connected`. From that point on, any file changes should cause the page to be automatically reloaded.
+## Thanks
+1. <https://github.com/shenfeng/http-watcher>
