@@ -56,9 +56,9 @@
             $("#img-qrcode").attr("src", "http://chart.googleapis.com/chart?chs=150x150&cht=qr&chl="+url);
             $("#dialog").dialog({
               dialogClass: "no-close", // FIXME: not working
-              buttons: {
-                  OK: function() {$(this).dialog("close");}
-               },
+              // buttons: {
+              //     OK: function() {$(this).dialog("close");}
+              //  },
             });
           })
         })

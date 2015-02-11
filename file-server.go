@@ -86,11 +86,25 @@ func dirHandler(host, path string, f *os.File, r render.Render) {
 	}
 }
 
+func restoreAssets() {
+	selfDir := filepath.Dir(os.Args[0])
+	for _, folder := range []string{"templates", "public"} {
+		if _, err := os.Stat(folder); err != nil {
+			if er := RestoreAssets(selfDir, "templates"); err != nil {
+				log.Fatal(er)
+			}
+		}
+	}
+}
+
 func main() {
 	flag.IntVar(&globalCfg.port, "port", 8000, "Which port to listen")
 	flag.StringVar(&globalCfg.root, "root", ".", "Watched root directory for filesystem events, also the HTTP File Server's root directory")
 	flag.BoolVar(&globalCfg.private, "private", false, "Only listen on lookback interface, otherwise listen on all interface")
 	flag.Parse()
+
+	// extract files
+	restoreAssets()
 
 	m.Get("/files/**", func(req *http.Request, w http.ResponseWriter, params martini.Params, r render.Render) {
 		path := params["_1"]
@@ -129,15 +143,10 @@ func main() {
 		}
 	})
 
-	m.Get("/info/**", func(params martini.Params, r render.Render) {
-	})
+	//m.Get("/info/**", func(params martini.Params, r render.Render) {
+	//})
 
 	http.Handle("/", m)
-
-	// log.SetFlags(log.LstdFlags | log.Lshortfile)
-	// if e := os.Chdir(globalCfg.root); e != nil {
-	// 	log.Panic(e)
-	// }
 
 	int := ":" + strconv.Itoa(globalCfg.port)
 	p := strconv.Itoa(globalCfg.port)
