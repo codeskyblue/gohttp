@@ -4,8 +4,9 @@
 #
 
 all:
-	go-bindata templates public
+	go-bindata templates public/...
 	go build
+	GOOS=windows GOARCH=386 go build
 
 
 # vim:ft=make
