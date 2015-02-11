@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta charset="utf-8" />
+		<title>Help</title>
+	</head>
+	<body>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTTP watcher Documentation</title>
+    <style>
+      body { width: 800px; margin: 0 auto; }
+	    @media (max-width: 1000px) {
+        body { width: auto; padding: 0 4px; }
+      }
+      .mesg { background: #fff1a8; padding: 6px 2px; font: bold 15px monospace; }
+      .note {
+      	  background: #ffffcc;
+      	  font-family: monospace;
+      	  padding: 4px;
+      }
+      pre { white-space: pre-wrap;}
+      h1 { text-align: center;}
+      ul { padding: 0; list-style: none; }
+      li { padding: 4px; margin: 4px 0; }
+      #footer {
+          margin: 20px 0;
+          text-align: right;
+          font-size: 11px;
+          color: #888;
+      }
+      #footer .doc { float: left; }
+      #footer a { color: #555; }
+      .ignores li { padding: 0; margin: 4px; }
+      pre {
+         font-family: monospace;
+         font-size: 15px;
+         line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>HTTP Watcher Documentation</h1>
+    {{if .error}}
+      <p class="mesg">ERROR: {{.error}}</p>
+    {{end}}
+
+    <h3>Visit (automatically reload when file changes detected)</h3>
+
+    <h3>Command Help</h3>
+    <pre>http-watcher -h</pre>
+    </div>
+    <div id="footer">
+       <a href="https://github.com/shenfeng/http-watcher">http-watcher</a>,
+       write by <a href="http://shenfeng.me">Feng Shen</a> in golang,<a href="/_d/doc">doc</a>
+    </div>
+  </body>
+		
+	</body>
+</html>

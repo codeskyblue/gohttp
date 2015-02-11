@@ -8,30 +8,29 @@ import (
 	"mime"
 	"net/http"
 	"os"
-
 	"path/filepath"
 	"strconv"
 	"strings"
-	"text/template"
+
+	"github.com/go-martini/martini"
+	"github.com/martini-contrib/render"
 )
 
 type ReloadMux struct {
-	port        int
-	root        string
-	dirListTmpl *template.Template
-	docTmpl     *template.Template
-	private     bool
+	port    int
+	root    string
+	private bool
 }
 
-var reloadCfg = ReloadMux{}
+var (
+	globalCfg = ReloadMux{}
+	m         = martini.Classic()
+)
 
-func showDoc(w http.ResponseWriter, req *http.Request, err error) {
-	if err != nil {
-		w.WriteHeader(404)
-	} else {
-		w.WriteHeader(200)
-	}
-	w.Header().Add("Content-Type", "text/html; charset=utf-8")
+func init() {
+	m.Use(render.Renderer(render.Options{
+		Extensions: []string{".tmpl", ".html"},
+	}))
 }
 
 func formatSize(file os.FileInfo) string {
@@ -50,8 +49,13 @@ func formatSize(file os.FileInfo) string {
 	return ""
 }
 
-func dirList(w http.ResponseWriter, f *os.File) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+func errHandler(r render.Render, err error) {
+	r.HTML(200, "error", map[string]string{
+		"error": err.Error(),
+	})
+}
+
+func dirHandler(host, path string, f *os.File, r render.Render) {
 	if dirs, err := f.Readdir(-1); err == nil {
 		files := make([]map[string]string, len(dirs)+1)
 		files[0] = map[string]string{
@@ -62,83 +66,82 @@ func dirList(w http.ResponseWriter, f *os.File) {
 			if d.IsDir() {
 				href += "/"
 			}
+			// infohref := "/info/" + path + "/" + d.Name()
+
 			files[i+1] = map[string]string{
-				"name":  d.Name(),
 				"href":  href,
+				"name":  d.Name(),
 				"size":  formatSize(d),
 				"mtime": d.ModTime().Format("2006-01-02 15:04:05"),
+				"host":  host,
+				"path":  filepath.Join(path, d.Name()),
+
+				// "infohref": infohref,
 			}
 		}
-		reloadCfg.dirListTmpl.Execute(w, map[string]interface{}{
+		r.HTML(200, "dirlist", map[string]interface{}{
 			"dir":   f.Name(),
 			"files": files,
 		})
 	}
 }
 
-func fileHandler(w http.ResponseWriter, path string, req *http.Request) {
-	if path == "" {
-		path = "."
-	}
-	f, err := os.Open(path)
-	if err != nil {
-		log.Println(err)
-		showDoc(w, req, err)
-		return
-	}
-	defer f.Close()
-
-	d, err1 := f.Stat()
-	if err1 != nil {
-		log.Println(err)
-		showDoc(w, req, err)
-		return
-	}
-
-	if d.IsDir() {
-		dirList(w, f)
-	} else {
-		ctype := mime.TypeByExtension(filepath.Ext(path))
-		if ctype != "" {
-			// go return charset=utf8 even if the charset is not utf8
-			idx := strings.Index(ctype, "; ")
-			if idx > 0 {
-				// remove charset; anyway, browsers are very good at guessing it.
-				ctype = ctype[0:idx]
-			}
-			w.Header().Set("Content-Type", ctype)
-		}
-		w.WriteHeader(200)
-		io.Copy(w, f)
-	}
-}
-
-func handler(w http.ResponseWriter, req *http.Request) {
-	path := req.URL.Path
-	fileHandler(w, path[1:], req)
-}
-
 func main() {
-	flag.IntVar(&(reloadCfg.port), "port", 8000, "Which port to listen")
-	flag.StringVar(&(reloadCfg.root), "root", ".", "Watched root directory for filesystem events, also the HTTP File Server's root directory")
-	flag.BoolVar(&(reloadCfg.private), "private", false, "Only listen on lookback interface, otherwise listen on all interface")
+	flag.IntVar(&globalCfg.port, "port", 8000, "Which port to listen")
+	flag.StringVar(&globalCfg.root, "root", ".", "Watched root directory for filesystem events, also the HTTP File Server's root directory")
+	flag.BoolVar(&globalCfg.private, "private", false, "Only listen on lookback interface, otherwise listen on all interface")
 	flag.Parse()
 
-	t, _ := template.New("dirlist").Parse(DIR_HTML)
-	reloadCfg.dirListTmpl = t
-	t, _ = template.New("doc").Parse(HELP_HTML)
-	reloadCfg.docTmpl = t
+	m.Get("/files/**", func(req *http.Request, w http.ResponseWriter, params martini.Params, r render.Render) {
+		path := params["_1"]
+		if path == "" {
+			path = "."
+		}
+		path = filepath.Join(globalCfg.root, path)
+		f, err := os.Open(path)
+		if err != nil {
+			errHandler(r, err)
+			return
+		}
+		defer f.Close()
+
+		d, er := f.Stat()
+		if er != nil {
+			errHandler(r, er)
+			return
+		}
+		if d.IsDir() {
+			dirHandler(req.Host, path, f, r)
+		} else {
+			ctype := mime.TypeByExtension(filepath.Ext(path))
+			if ctype != "" {
+				// go return charset=utf8 even if the charset is not utf8
+				idx := strings.Index(ctype, "; ")
+				if idx > 0 {
+					// remove charset; anyway, browsers are very good at guessing it.
+					ctype = ctype[0:idx]
+				}
+				w.Header().Set("Content-Type", ctype)
+			}
+			w.WriteHeader(200)
+			io.Copy(w, f)
+		}
+	})
+
+	m.Get("/info/**", func(params martini.Params, r render.Render) {
+	})
+
+	http.Handle("/", m)
 
 	// log.SetFlags(log.LstdFlags | log.Lshortfile)
-	if e := os.Chdir(reloadCfg.root); e != nil {
-		log.Panic(e)
-	}
-	http.HandleFunc("/", handler)
+	// if e := os.Chdir(globalCfg.root); e != nil {
+	// 	log.Panic(e)
+	// }
 
-	int := ":" + strconv.Itoa(reloadCfg.port)
-	p := strconv.Itoa(reloadCfg.port)
+	int := ":" + strconv.Itoa(globalCfg.port)
+	p := strconv.Itoa(globalCfg.port)
 	mesg := "; please visit http://127.0.0.1:" + p
-	if reloadCfg.private {
+	if globalCfg.private {
 		int = "localhost" + int
 		log.Printf("listens on 127.0.0.1@" + p + mesg)
 	} else {

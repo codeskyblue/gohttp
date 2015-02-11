@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery-ui.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/jquery-ui.min.css" rel="stylesheet">
+    <link href="/css/jquery-ui.theme.min.css" rel="stylesheet">
+    <link href="/css/dirlist.css" rel="stylesheet">
+    <title>Directory Listing: {{.dir}}</title>
+  </head>
+  <body>
+    <div class="container">
+      <table cellspacing=0 class="table">
+        <h2>Directory List:  {{.dir}}</h2>
+        <thead>
+          <th>File</th>
+          <th>Size</th>
+          <th>Link</th>
+          <th>Last Modified</th>
+        </thead>
+        {{range .files}}
+        <tr>
+          <td class="name">
+            {{if ne .size "-"}}
+              
+              <a href="{{.href}}">{{.name}}</a>
+            {{else}}
+              <span class="glyphicon glyphicon-folder-open"></span> 
+              <a href="{{.href}}"><strong>{{.name}}</strong></a>
+            {{end}}
+          </td>
+          <td>{{ .size }}</td>
+          <td>
+            {{if ne .size "-"}}
+            <a href="{{.href}}">
+                <span class="glyphicon glyphicon-download-alt"></span>
+              </a>
+              &nbsp;
+              <span class="glyphicon glyphicon-qrcode" data="http://{{.host}}/files/{{.path}}"></span>
+            {{end}}
+          </td>
+          <td class="mtime">{{ .mtime }}</td>
+        </tr>
+        {{end}}
+      </table>
+
+      <script>
+        $(function(){
+          $("span.glyphicon-qrcode").click(function(){
+            console.log("GOOD");
+            var url = $(this).attr("data");
+            $("#img-qrcode").attr("src", "http://chart.googleapis.com/chart?chs=150x150&cht=qr&chl="+url);
+            $("#dialog").dialog();
+          })
+        })
+      </script>
+
+      <div id="dialog" title="qrcode" style="display: none">
+        <img id="img-qrcode" src=""/>
+      </div>
+
+      {{template "footer" .}}
+    </div>
+  </body>
+</html>
