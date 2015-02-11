@@ -97,8 +97,9 @@ func main() {
 		if path == "" {
 			path = "."
 		}
-		path = filepath.Join(globalCfg.root, path)
-		f, err := os.Open(path)
+		fullpath := filepath.Join(globalCfg.root, path)
+		log.Println(path)
+		f, err := os.Open(fullpath)
 		if err != nil {
 			errHandler(r, err)
 			return
