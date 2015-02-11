@@ -26,5 +26,7 @@ http-watcher的简化版，除去了其他东西，只保留了文件服务器�
 
 可用的下载有linux和windows两个。[从github上下载](https://github.com/codeskyblue/file-server/releases/tag/v0.1)
 
+![demo](images/demo.png)
+
 ## Thanks
 1. <https://github.com/shenfeng/http-watcher>
