@@ -8,7 +8,6 @@
     <script src="/js/bootstrap.min.js"></script>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/jquery-ui.min.css" rel="stylesheet">
-    <link href="/css/jquery-ui.theme.min.css" rel="stylesheet">
     <link href="/css/dirlist.css" rel="stylesheet">
     <title>Directory Listing: {{.dir}}</title>
   </head>
@@ -53,10 +52,14 @@
       <script>
         $(function(){
           $("span.glyphicon-qrcode").click(function(){
-            console.log("GOOD");
             var url = $(this).attr("data");
             $("#img-qrcode").attr("src", "http://chart.googleapis.com/chart?chs=150x150&cht=qr&chl="+url);
-            $("#dialog").dialog();
+            $("#dialog").dialog({
+              dialogClass: "no-close", // FIXME: not working
+              buttons: {
+                  OK: function() {$(this).dialog("close");}
+               },
+            });
           })
         })
       </script>
