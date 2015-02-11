@@ -29,8 +29,10 @@
               
               <a href="{{.href}}">{{.name}}</a>
             {{else}}
-              <span class="glyphicon glyphicon-folder-open"></span> 
-              <a href="{{.href}}"><strong>{{.name}}</strong></a>
+              <a href="{{.href}}">
+                <span class="glyphicon glyphicon-folder-open"></span> 
+                <strong>{{.name}}</strong>
+              </a>
             {{end}}
           </td>
           <td>{{ .size }}</td>
