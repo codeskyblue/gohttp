@@ -3,14 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log"
-	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
@@ -131,7 +128,9 @@ func main() {
 		if d.IsDir() {
 			dirHandler(req.Host, path, f, r)
 		} else {
-			ctype := mime.TypeByExtension(filepath.Ext(path))
+			w.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(path))
+			http.ServeFile(w, req, path)
+			/*ctype := mime.TypeByExtension(filepath.Ext(path))
 			if ctype != "" {
 				// go return charset=utf8 even if the charset is not utf8
 				idx := strings.Index(ctype, "; ")
@@ -143,6 +142,7 @@ func main() {
 			}
 			w.WriteHeader(200)
 			io.Copy(w, f)
+			*/
 		}
 	})
 
