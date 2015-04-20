@@ -5,8 +5,9 @@
 
 all:
 	go-bindata templates public/...
-	go build
 	GOOS=windows GOARCH=386 go build
+	GOOS=linux GOARCH=386 go build -o fileserv-linux-386
+	GOOS=linux GOARCH=amd64 go build -o fileserv-linux-amd64
 
 
 # vim:ft=make

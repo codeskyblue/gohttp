@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/jquery-ui.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/jquery-ui.min.css" rel="stylesheet">
-    <link href="/css/dirlist.css" rel="stylesheet">
+    <script src="/_/js/jquery.min.js"></script>
+    <script src="/_/js/jquery-ui.min.js"></script>
+    <script src="/_/js/bootstrap.min.js"></script>
+    <link href="/_/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/_/css/jquery-ui.min.css" rel="stylesheet">
+    <link href="/_/css/dirlist.css" rel="stylesheet">
     <title>Directory Listing: {{.dir}}</title>
   </head>
   <body>
@@ -41,7 +41,7 @@
                 <span class="glyphicon glyphicon-download-alt"></span>
               </a>
               &nbsp;
-              <span class="glyphicon glyphicon-qrcode" data="http://{{.host}}/files/{{.path}}"></span>
+              <span class="glyphicon glyphicon-qrcode" data="http://{{.host}}/{{.path}}"></span>
             {{end}}
           </td>
           <td class="mtime">{{ .mtime }}</td>
@@ -53,7 +53,7 @@
         $(function(){
           $("span.glyphicon-qrcode").click(function(){
             var url = $(this).attr("data");
-            $("#img-qrcode").attr("src", "http://chart.googleapis.com/chart?chs=250x250&cht=qr&chl="+url);
+            $("#img-qrcode").attr("src", "/_qr?text="+url);
             $("#dialog").dialog({
               dialogClass: "no-close", // FIXME: not working
               // buttons: {
