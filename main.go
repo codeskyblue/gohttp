@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -109,16 +110,7 @@ func main() {
 	// extract files
 	restoreAssets()
 
-	m.Get("/_qr", func(r *http.Request, w http.ResponseWriter) {
-		text := r.FormValue("text")
-		code, _ := qr.Encode(text, qr.M)
-		w.Header().Set("Content-Type", "image/png")
-		w.Write(code.PNG())
-	})
-	m.Get("/_/**", func(r *http.Request, w http.ResponseWriter, p martini.Params) {
-		http.ServeFile(w, r, filepath.Join("public", p["_1"]))
-	})
-	m.Get("/**", func(req *http.Request, w http.ResponseWriter, params martini.Params, r render.Render) {
+	handleDirectory := func(req *http.Request, w http.ResponseWriter, params martini.Params, r render.Render) {
 		path := params["_1"]
 		if path == "" {
 			path = "."
@@ -143,7 +135,54 @@ func main() {
 			w.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(path))
 			http.ServeFile(w, req, filepath.Join(gcfg.root, path))
 		}
+	}
+
+	m.Get("/_qr", func(r *http.Request, w http.ResponseWriter) {
+		text := r.FormValue("text")
+		code, _ := qr.Encode(text, qr.M)
+		w.Header().Set("Content-Type", "image/png")
+		w.Write(code.PNG())
 	})
+	m.Get("/_/**", func(r *http.Request, w http.ResponseWriter, p martini.Params) {
+		http.ServeFile(w, r, filepath.Join("public", p["_1"]))
+	})
+	// Handle Upload file
+	m.Post("/**", func(req *http.Request, w http.ResponseWriter, params martini.Params, r render.Render) {
+		err := req.ParseMultipartForm(100 << 20) // max memory 100M
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Println("Hi", err)
+			return
+		}
+		log.Println(params["_1"])
+		// if strings.HasSuffix(params["_1"], "..") {
+		// 	params["_1"] = params["_1"][:len(params["_1"])-2]
+		// }
+		dirpath := filepath.Join(gcfg.root, params["_1"])
+		for _, mfile := range req.MultipartForm.File["file"] {
+			file, err := mfile.Open()
+			defer file.Close()
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			dst, err := os.Create(filepath.Join(dirpath, mfile.Filename)) // BUG(ssx): There is a leak here
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			defer dst.Close()
+			if _, err := io.Copy(dst, file); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+		handleDirectory(req, w, params, r)
+		// log.Println("FILES:", file)
+
+		http.Redirect(w, req, req.RequestURI, http.StatusTemporaryRedirect)
+	})
+	m.Get("/**", handleDirectory)
 
 	http.Handle("/", m)
 

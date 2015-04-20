@@ -25,47 +25,80 @@
         <tr>
           <td class="name">
             {{if ne .size "-"}}
-              
-              <a href="{{.href}}">{{.name}}</a>
+            
+            <a href="{{.href}}">{{.name}}</a>
             {{else}}
-              <a href="{{.href}}">
-                <span class="glyphicon glyphicon-folder-open"></span> 
-                <strong>{{.name}}</strong>
-              </a>
+            <a href="{{.href}}">
+              <span class="glyphicon glyphicon-folder-open"></span>
+              <strong>{{.name}}</strong>
+            </a>
             {{end}}
           </td>
           <td>{{ .size }}</td>
           <td>
             {{if ne .size "-"}}
             <a href="{{.href}}">
-                <span class="glyphicon glyphicon-download-alt"></span>
-              </a>
-              &nbsp;
-              <span class="glyphicon glyphicon-qrcode" data="http://{{.host}}/{{.path}}"></span>
+              <span class="glyphicon glyphicon-download-alt"></span>
+            </a>
+            &nbsp;
+            <span class="glyphicon glyphicon-qrcode" data="http://{{.host}}/{{.path}}"></span>
+            {{else}}
+            {{if eq .name ".." }}
+            <button data-toggle="modal" data-target="#upload-modal" class="btn btn-xs btn-success">
+              <span class="glyphicon glyphicon-upload"></span> upload
+            </button>
+            {{end}}
             {{end}}
           </td>
           <td class="mtime">{{ .mtime }}</td>
         </tr>
         {{end}}
       </table>
-
       <script>
-        $(function(){
-          $("span.glyphicon-qrcode").click(function(){
-            var url = $(this).attr("data");
-            $("#img-qrcode").attr("src", "/_qr?text="+url);
-            $("#dialog").dialog({
-              dialogClass: "no-close", // FIXME: not working
-              // buttons: {
-              //     OK: function() {$(this).dialog("close");}
-              //  },
-            });
-          })
-        })
+      $(function(){
+      $("span.glyphicon-qrcode").click(function(){
+      var url = $(this).attr("data");
+      $("#img-qrcode").attr("src", "/_qr?text="+url);
+      $("#dialog").dialog({
+      dialogClass: "no-close", // FIXME: not working
+      });
+      })
+      })
+      // $(".btn-upload").
+      $(function(){
+        $("#btn-upload").click(function(){
+          $("#form-upload").submit();
+        });
+      })
       </script>
-
       <div id="dialog" title="qrcode" style="display: none">
         <img id="img-qrcode" src=""/>
+      </div>
+
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary btn-lg" >
+      Launch demo modal
+      </button>
+      <!-- Modal -->
+      <div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">文件上传</h4>
+            </div>
+            <div class="modal-body">
+              <form id="form-upload" role="form" method="post" enctype="multipart/form-data">
+                  <input class="form-control" name="file" type="file" multiple="multiple" required>
+              </form>
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button id="btn-upload" type="button" class="btn btn-primary">上传</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {{template "footer" .}}
