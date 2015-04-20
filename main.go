@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"code.google.com/p/rsc/qr"
 
@@ -155,10 +156,8 @@ func main() {
 			return
 		}
 		log.Println(params["_1"])
-		// if strings.HasSuffix(params["_1"], "..") {
-		// 	params["_1"] = params["_1"][:len(params["_1"])-2]
-		// }
-		dirpath := filepath.Join(gcfg.root, params["_1"])
+		path := strings.Replace(params["_1"], "..", "", -1)
+		dirpath := filepath.Join(gcfg.root, path)
 		for _, mfile := range req.MultipartForm.File["file"] {
 			file, err := mfile.Open()
 			defer file.Close()
