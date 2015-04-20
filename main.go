@@ -91,7 +91,7 @@ func dirHandler(host, path string, f *os.File, r render.Render) {
 
 func restoreAssets() {
 	selfDir := filepath.Dir(os.Args[0])
-	for _, folder := range []string{"templates", "public"} {
+	for _, folder := range []string{"data", "templates", "public"} {
 		if _, err := os.Stat(folder); err != nil {
 			if er := RestoreAssets(selfDir, folder); er != nil {
 				log.Fatal("RestoreAssets:", er)
