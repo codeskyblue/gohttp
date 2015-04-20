@@ -91,10 +91,10 @@ func dirHandler(host, path string, f *os.File, r render.Render) {
 
 func restoreAssets() {
 	selfDir := filepath.Dir(os.Args[0])
-	for _, folder := range []string{"data", "templates", "public"} {
+	for _, folder := range []string{"templates", "public"} {
 		if _, err := os.Stat(folder); err != nil {
 			if er := RestoreAssets(selfDir, folder); er != nil {
-				log.Fatal("RestoreAssets", er)
+				log.Fatal("RestoreAssets:", er)
 			}
 		}
 	}
@@ -109,9 +109,6 @@ func main() {
 	// extract files
 	restoreAssets()
 
-	//m.Get("/", func(w http.ResponseWriter, r *http.Request) {
-	//	http.Redirect(w, r, "/files/", http.StatusTemporaryRedirect)
-	//})
 	m.Get("/_qr", func(r *http.Request, w http.ResponseWriter) {
 		text := r.FormValue("text")
 		code, _ := qr.Encode(text, qr.M)
