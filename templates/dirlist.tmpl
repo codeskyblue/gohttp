@@ -4,10 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="/_/js/jquery.min.js"></script>
-    <script src="/_/js/jquery-ui.min.js"></script>
     <script src="/_/js/bootstrap.min.js"></script>
     <link href="/_/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/_/css/jquery-ui.min.css" rel="stylesheet">
     <link href="/_/css/dirlist.css" rel="stylesheet">
     <title>Directory Listing: {{.dir}}</title>
   </head>
@@ -37,17 +35,19 @@
           <td>{{ .size }}</td>
           <td>
             {{if ne .size "-"}}
-            <a href="{{.href}}">
-              <span class="glyphicon glyphicon-download-alt"></span>
-            </a>
-            &nbsp;
-            <span class="glyphicon glyphicon-qrcode" data="http://{{.host}}/{{.path}}"></span>
+				<a href="{{.href}}">
+				  <span class="glyphicon glyphicon-download-alt"></span>
+				</a>
+				&nbsp;
+				<span data-toggle="modal" data-target="#qrcode-modal" data="http://{{.host}}/{{.path}}"
+					class="glyphicon glyphicon-qrcode">
+				</span>
             {{else}}
-            {{if eq .name ".." }}
-            <button data-toggle="modal" data-target="#upload-modal" class="btn btn-xs btn-success">
-              <span class="glyphicon glyphicon-upload"></span> upload
-            </button>
-            {{end}}
+				{{if eq .name ".." }}
+				<button data-toggle="modal" data-target="#upload-modal" class="btn btn-xs btn-success">
+				  <span class="glyphicon glyphicon-upload"></span> upload
+				</button>
+				{{end}}
             {{end}}
           </td>
           <td class="mtime">{{ .mtime }}</td>
@@ -56,26 +56,19 @@
       </table>
       <script>
       $(function(){
-      $("span.glyphicon-qrcode").click(function(){
-      var url = $(this).attr("data");
-      $("#img-qrcode").attr("src", "/_qr?text="+url);
-      $("#dialog").dialog({
-      dialogClass: "no-close", // FIXME: not working
-      });
-      })
-      })
-      // $(".btn-upload").
-      $(function(){
-        $("#btn-upload").click(function(){
-          $("#form-upload").submit();
-        });
+		  $("span.glyphicon-qrcode").click(function(){
+			  var url = $(this).attr("data");
+		      $("#qr-image").attr("src", "/_qr?text="+url);
+		      $("#qr-title").text(url);
+		  });
+		  $('[data-toggle="tooltip"]').tooltip();
+          $("#btn-upload").click(function(){
+            $("#form-upload").submit();
+          });
       })
       </script>
-      <div id="dialog" title="qrcode" style="display: none">
-        <img id="img-qrcode" src=""/>
-      </div>
 
-      <!-- Modal -->
+      <!-- File Upload Modal -->
       <div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -92,6 +85,25 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
               <button id="btn-upload" type="button" class="btn btn-primary">上传</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QR Code Modal -->
+      <div class="modal fade" id="qrcode-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">QR CODE</h4>
+            </div>
+            <div class="modal-body">
+  			  <h4 id="qr-title"></h4>
+			  <img id="qr-image" src="/_qr?text=hello"/>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
