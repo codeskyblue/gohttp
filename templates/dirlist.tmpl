@@ -3,16 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="/_/js/jquery.min.js"></script>
-    <script src="/_/js/bootstrap.min.js"></script>
-    <link href="/_/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="//cdn.bootcss.com/bootswatch/3.3.5/slate/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="//cdn.bootcss.com/bootswatch/3.3.5/paper/bootstrap.min.css" rel="stylesheet">
     <link href="/_/css/dirlist.css" rel="stylesheet">
-    <title>Directory Listing: {{.dir}}</title>
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <title>dir - {{.dir}}</title>
   </head>
   <body>
+    {{template "header" .}}
     <div class="container">
       <table cellspacing=0 class="table">
-        <h2>Directory List:  {{.dir}}</h2>
+        <h5>Directory List:  {{.dir}}</h5>
         <thead>
           <th>File</th>
           <th>Size</th>

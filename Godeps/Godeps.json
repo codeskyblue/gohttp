@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/codeskyblue/file-server",
-	"GoVersion": "go1.4.2",
+	"GoVersion": "go1.5.1",
 	"Deps": [
 		{
 			"ImportPath": "code.google.com/p/rsc/gf256",
@@ -13,22 +13,17 @@
 			"Rev": "2d8aa6027fab93979a3b4ecdbeb1ba430b489318"
 		},
 		{
-			"ImportPath": "github.com/codegangsta/inject",
-			"Comment": "v1.0-rc1-10-g33e0aa1",
-			"Rev": "33e0aa1cb7c019ccc3fbe049a8262a6403d30504"
+			"ImportPath": "github.com/Unknwon/com",
+			"Rev": "47d7d2b81a44157600669037e11e9ddfbf16745f"
 		},
 		{
-			"ImportPath": "github.com/go-martini/martini",
-			"Comment": "v1.0-107-g627d985",
-			"Rev": "627d985ef9f202fbfc53531f1da96ef92ae3fb3e"
+			"ImportPath": "github.com/Unknwon/macaron",
+			"Rev": "635c89ac7410dd20df967e37e8f7f173e126cedd"
 		},
 		{
-			"ImportPath": "github.com/martini-contrib/render",
-			"Rev": "b65063311fac6cbf84d3538f5715f7847e648322"
-		},
-		{
-			"ImportPath": "github.com/oxtoacart/bpool",
-			"Rev": "754d38fccfc6e52083355014b6abc8d626445dfd"
+			"ImportPath": "gopkg.in/ini.v1",
+			"Comment": "v0-33-g4633071",
+			"Rev": "463307112d3b6430c54c3dad77b4d0fa745b859c"
 		}
 	]
 }
