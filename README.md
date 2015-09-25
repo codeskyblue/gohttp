@@ -1,4 +1,6 @@
 # File Static Server
+[![gorelease](https://dn-gorelease.qbox.me/gorelease-download-blue.svg)](http://gorelease.herokuapp.com/codeskyblue/file-server)
+
 This is file server writen by golang.
 
 http-watcher的简化版，除去了其他东西，只保留了文件服务器的东西。
@@ -23,8 +25,6 @@ http-watcher的简化版，除去了其他东西，只保留了文件服务器�
 		-port=8000: Which port to listen
 		-private=false: Only listen on lookback interface, otherwise listen on all interface
 		-root=".": the HTTP File Server's root directory
-
-可用的下载有linux和windows两个。[从github上下载](https://github.com/codeskyblue/file-server/releases/tag/v0.1)
 
 ![demo](images/demo.png)
 
