@@ -41,7 +41,7 @@
 				  <span class="glyphicon glyphicon-download-alt"></span>
 				</a>
 				&nbsp;
-				<span data-toggle="modal" data-target="#qrcode-modal" data="http://{{.host}}/{{.path}}"
+				<span data="http://{{.host}}/{{.path}}" file_name="{{.name}}"
 					class="glyphicon glyphicon-qrcode">
 				</span>
             {{else}}
@@ -60,14 +60,21 @@
       $(function(){
 		  $("span.glyphicon-qrcode").click(function(){
 			  var url = $(this).attr("data");
-		      $("#qr-image").attr("src", "/_qr?text="+url);
-		      $("#qr-title").text(url);
+        var file_name = $(this).attr("file_name");
+		      // $("#qr-image").attr("src", "/_qr?text="+url);
+		      // $("#qr-title").text(url);
+          //update qrcode by aTool, do not use modal
+          share_file(url, file_name);
 		  });
 		  $('[data-toggle="tooltip"]').tooltip();
           $("#btn-upload").click(function(){
             $("#form-upload").submit();
           });
       })
+      function share_file(url, file_name) {
+        document.getElementById("share_file_box").innerHTML = '<div class="full_screen_bg" onclick="this.parentNode.innerHTML=\' \';"></div><div class="share_file"><a href="javascript:;" onclick="this.parentNode.parentNode.innerHTML=\' \';" class="popup_close">×</a><p>下载该文件</p><p class="file_url">'+file_name+'</p><img class="qrcode" width="200" height="200" src="/_qr?text=' + url + '" /><p>打开手机扫一扫，对准二维码扫描即可下载地址。</p></div>';
+        return false;
+      }
       </script>
 
       <!-- File Upload Modal -->
@@ -93,7 +100,10 @@
       </div>
 
       <!-- QR Code Modal -->
-      <div class="modal fade" id="qrcode-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <!-- update qrcode by aTool  -->
+      <div id="share_file_box"></div>
+
+      <!-- <div class="modal fade" id="qrcode-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -109,7 +119,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       {{template "footer" .}}
     </div>
