@@ -1,0 +1,14 @@
+author: codeskyblue
+description: '...'
+os: darwin linux windows
+includes:
+  - README.md
+  - LICENSE
+  - templates
+  - public
+  - data
+excludes:
+  - \.git
+script:
+  - go get -v
+  - go build
