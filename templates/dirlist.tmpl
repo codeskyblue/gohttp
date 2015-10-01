@@ -13,6 +13,7 @@
   <body>
     {{template "header" .}}
     <div class="container">
+	  <div class="col-md-12">
       <table cellspacing=0 class="table">
         <h5>Directory List:  {{.dir}}</h5>
         <thead>
@@ -56,6 +57,7 @@
         </tr>
         {{end}}
       </table>
+	  </div>
       <script>
       $(function(){
 		  $("span.glyphicon-qrcode").click(function(){
