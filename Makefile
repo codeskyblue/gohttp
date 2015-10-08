@@ -10,7 +10,7 @@ binary:
 	go build
 
 npm:
-	npm install
+	npm install --dev
 
 cross-build:
 	GOOS=windows GOARCH=386 go build
