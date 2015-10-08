@@ -3,9 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <link href="//cdn.bootcss.com/bootswatch/3.3.5/slate/bootstrap.min.css" rel="stylesheet"> -->
     <link href="//cdn.bootcss.com/bootswatch/3.3.5/paper/bootstrap.min.css" rel="stylesheet">
-    <link href="/-/css/dirlist.css" rel="stylesheet">
     <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <title>dir - {{.dir}}</title>
@@ -101,28 +99,6 @@
           </div>
         </div>
       </div>
-
-      <!-- QR Code Modal -->
-      <!-- update qrcode by aTool  -->
-      <div id="share_file_box"></div>
-
-      <!-- <div class="modal fade" id="qrcode-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title">QR CODE</h4>
-            </div>
-            <div class="modal-body">
-  			  <h4 id="qr-title"></h4>
-			  <img id="qr-image" src="/_qr?text=hello"/>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
-      </div> -->
 
       <script type="text/javascript" src="/bundle.js" charset="utf-8"></script>
       {{template "footer" .}}
