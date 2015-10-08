@@ -28,3 +28,4 @@ _testmain.go
 
 node_modules/
 file-server
+bindata.go

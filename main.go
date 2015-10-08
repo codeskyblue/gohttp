@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/Unknwon/macaron"
+	"github.com/codeskyblue/file-server/modules"
 	"github.com/codeskyblue/file-server/routers"
 )
 
@@ -23,7 +24,8 @@ var m *macaron.Macaron
 
 func init() {
 	m = macaron.Classic()
-	m.Use(macaron.Renderer())
+	m.Use(modules.Public)
+	m.Use(modules.Renderer)
 
 	flag.IntVar(&gcfg.port, "port", 8000, "Which port to listen")
 	flag.StringVar(&gcfg.root, "root", ".", "Watched root directory for filesystem events, also the HTTP File Server's root directory")
@@ -33,7 +35,7 @@ func init() {
 func initRouters() {
 	m.Get("/_qr", routers.Qrcode)
 	m.Get("/*", routers.NewDirHandler(gcfg.root))
-	m.Get("/_/*", routers.AssetsHandler)
+	//m.Get("/_/*", routers.AssetsHandler)
 	m.Post("/*", routers.NewUploadHandler(gcfg.root))
 }
 
