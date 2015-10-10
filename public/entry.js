@@ -3,4 +3,4 @@
 //document.write(require('./content.js'));
 
 require('./css/style.css')
-require('./index.jsx')
+require('./main.jsx')

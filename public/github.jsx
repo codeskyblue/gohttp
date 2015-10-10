@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 'use strict'
 
 var React = require('react');
@@ -63,15 +61,18 @@ var AccessLink = React.createClass({
 		)
 	}
 })
-ReactDOM.render(
-	<GithubButton/>,
-	document.getElementById("nav-right-bar")
-)
 
-var qrcodes = document.getElementsByClassName("qrcode")
+module.exports = GithubButton
 
-Array.prototype.forEach.call(qrcodes, function(mountNode){
-	ReactDOM.render(
-		<AccessLink/>, mountNode
-	)
-})
+// ReactDOM.render(
+// 	<GithubButton/>,
+// 	document.getElementById("nav-right-bar")
+// )
+
+// var qrcodes = document.getElementsByClassName("qrcode")
+
+// Array.prototype.forEach.call(qrcodes, function(mountNode){
+// 	ReactDOM.render(
+// 		<AccessLink/>, mountNode
+// 	)
+// })

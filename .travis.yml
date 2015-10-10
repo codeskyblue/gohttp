@@ -4,6 +4,8 @@ go:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq nodejs npm
+  - sudo npm install -g webpack
+  - npm install
 script:
   - go get -v
   - go test -v ./...

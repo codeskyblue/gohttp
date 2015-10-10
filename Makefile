@@ -12,11 +12,11 @@ prod: webpack
 	go build -tags "bindata"
 
 install-deps:
-	sudo apt-get install -y nodejs npm
+	sudo apt-get update -qq
+	sudo apt-get install -qq nodejs npm
 
 deps:
 	npm install
-	bower install
 
 cross-build:
 	GOOS=windows GOARCH=386 go build
@@ -24,7 +24,9 @@ cross-build:
 	GOOS=linux GOARCH=amd64 go build -o fileserv-linux-amd64
 
 webpack:
-	(cd public; webpack)
+	webpack
 
+clean:
+	rm public/bundle.js
 # vim:ft=make
 #

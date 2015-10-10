@@ -2,28 +2,29 @@ var webpack = require('webpack');
 var path = require('path');
 
 module.exports = {
+	evtool: 'eval',
 	entry: [
 		'webpack-dev-server/client?http://localhost:3000',
 		'webpack/hot/only-dev-server',
-		"./entry.js"
+		"./public/entry.js"
 	],
 	output: {
-		path: __dirname,
-		filename: "bundle.js"
+		path: path.join(__dirname, 'public'),
+		filename: "bundle.js",
+		publicPath: "/-/"
 	},
 	module: {
 		loaders: [
 			{test: /\.css$/, loader: "style!css"},
 			{
 				test: /\.jsx$/, 
-				loaders: ['react-hot', 'jsx?harmony'],
-				include: [path.join(__dirname, '.')]
+				loaders: ['react-hot', 'babel'],
+				include: [path.join(__dirname, 'public')]
 			}
 		]
 	},
 	plugins: [
-		new webpack.HotModuleReplacementPlugin(),
-		new webpack.NoErrorsPlugin()
+		new webpack.HotModuleReplacementPlugin()
     ],
 	resolve: {
 		extensions: ['', '.js', 'jsx']
