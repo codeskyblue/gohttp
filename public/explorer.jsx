@@ -56,18 +56,15 @@ var PathBreadcrumb = React.createClass({
     var paths = location.pathname.split('/');
     paths.pop();
     paths.shift();
-    console.log(paths);
     var itemPaths = [];
     var currPath = '/';
     paths.forEach(function(name){
-      // var currPath = path.join(, 's')
       var newPath = path.join(currPath, name);
       currPath = newPath;
       itemPaths.push({
         directory: currPath,
         name: name
       })
-      console.log(currPath)
     })
     var items = itemPaths.map(function(subPath){
       return (
@@ -94,28 +91,35 @@ var Explorer = React.createClass({
   render: function(){
     return (
       <Row>
-        <Col md={3}>
-          <ButtonToolbar>
-            <Button bsSize="small">
-              Up <i className="fa fa-level-up"/>
-            </Button>
-            <Button bsSize="small">
-              Upload <i className="fa fa-upload"/>
-            </Button>
-          </ButtonToolbar>
-        </Col>
-        <Col md={9}>
+        <Col md={12}>
           <PathBreadcrumb/>
         </Col>
         <Col md={12}>
           <Table striped bordered condensed hover>
             <thead>
               <tr>
-                <th>#</th>
+                <th>
+                  #
+                </th>
                 <th className="table-name">Name</th>
                 <th>Size</th>
                 <th>Control</th>
                 <th>Modity Time</th>
+              </tr>
+              <tr>
+                <td>
+                  <Button bsSize="xsmall" bsStyle="link" href="..">
+                    <i className="fa fa-level-up"/>
+                  </Button>
+                </td>
+                <td>..</td>
+                <td colSpan={3}>
+                  <ButtonToolbar>
+                    <Button bsSize="xsmall">
+                      Upload <i className="fa fa-upload"/>
+                    </Button>
+                  </ButtonToolbar>
+              </td>
               </tr>
             </thead>
               
