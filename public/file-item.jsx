@@ -33,7 +33,9 @@ var FileItem = React.createClass({
 				<td>
 					{fileIcon}
 				</td>
-				<td>{this.props.data.name}</td>
+				<td>
+					<a href={this.props.data.name}>{this.props.data.name}</a>
+				</td>
 				<td>{humanize.filesize(this.props.data.size)}</td>
 				<td>
 					<div>
