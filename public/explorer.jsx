@@ -33,12 +33,26 @@ var fileList = [
     type: "file",
     size: 13322,
     mtime: 122123123844
+  },
+  {
+    name: ".gitignore",
+    type: "file",
+    size: 13322,
+    mtime: 122123123844
   }
 ]
 
 var FileList = React.createClass({
   render: function(){
-    var fileItems = this.props.data.map(function(item){
+    var that = this;
+    var filterData = this.props.data.filter(function(item){
+      var isHidden = (item.name.substr(0, 1) == '.')
+      if (isHidden && !that.props.showHidden){
+        return false;
+      }
+      return true;
+    })
+    var fileItems = filterData.map(function(item){
       return (
         <FileItem key={item.name} data={item}/>
       )
@@ -86,7 +100,10 @@ var PathBreadcrumb = React.createClass({
 
 var Explorer = React.createClass({
   getInitialState: function(){
-    return {data: fileList}
+    return {
+      data: fileList,
+      hidden: false,
+    }
   },
   render: function(){
     return (
@@ -98,32 +115,33 @@ var Explorer = React.createClass({
           <Table striped bordered condensed hover>
             <thead>
               <tr>
+                <td colSpan={5}>
+                  <ButtonToolbar>
+                    <Button bsSize="xsmall">
+                      Upload <i className="fa fa-upload"/>
+                    </Button>
+                    <Button bsSize="xsmall"　onClick={
+                      ()=>this.setState({hidden: !this.state.hidden})
+                    }>
+                      Show Hidden　<input type="checkbox" checked={this.state.hidden}/>
+                    </Button>
+                  </ButtonToolbar>
+                </td>
+              </tr>
+              <tr>
                 <th>
-                  #
+                  <Button bsSize="xsmall" bsStyle="link" href="..">
+                    <i className="fa fa-level-up"/>
+                  </Button>
                 </th>
                 <th className="table-name">Name</th>
                 <th>Size</th>
                 <th>Control</th>
                 <th>Modity Time</th>
               </tr>
-              <tr>
-                <td>
-                  <Button bsSize="xsmall" bsStyle="link" href="..">
-                    <i className="fa fa-level-up"/>
-                  </Button>
-                </td>
-                <td>..</td>
-                <td colSpan={3}>
-                  <ButtonToolbar>
-                    <Button bsSize="xsmall">
-                      Upload <i className="fa fa-upload"/>
-                    </Button>
-                  </ButtonToolbar>
-              </td>
-              </tr>
             </thead>
               
-            <FileList data={this.state.data} />
+            <FileList data={this.state.data} showHidden={this.state.hidden}/>
           </Table>
         </Col>
       </Row>
