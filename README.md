@@ -31,3 +31,5 @@ http-watcher的简化版，除去了其他东西，只保留了文件服务器�
 ## Thanks
 1. <https://github.com/shenfeng/http-watcher>
 2. <http://segmentfault.com/a/1190000002551952>
+3. [update package.json dependencies](http://stackoverflow.com/questions/16073603/how-do-i-update-each-dependency-in-package-json-to-the-latest-version)
+4. [react hot reload QA](https://github.com/gaearon/react-hot-loader/blob/master/docs/Troubleshooting.md)

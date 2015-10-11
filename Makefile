@@ -3,11 +3,12 @@
 # hzsunshx, 2015-02-11 13:17
 #
 
-dev: webpack
-	go build
+dev: clean
+	npm start
 
-prod: webpack
-	(cd public; go-bindata -pkg public bundle.js css/)
+prod:
+	webpack -p --progress
+	(cd public; go-bindata -pkg public bundle.js css/ fonts/ font-awesome/...)
 	(cd templates; go-bindata -pkg templates ./...)
 	go build -tags "bindata"
 
@@ -27,6 +28,6 @@ webpack:
 	webpack
 
 clean:
-	rm public/bundle.js
+	rm -f public/bundle.js
 # vim:ft=make
 #
