@@ -1,14 +1,14 @@
 'use strict'
 
 var React = require('react');
-var FileTable = require('./file-table.jsx')
+var Explorer = require('./explorer.jsx')
 
 var Content = React.createClass({
 	render: function(){
 		return (
 			<div>
-				<h3>{location.pathname}</h3>
-				<FileTable/>
+				<h3>Simple HTTP File Server</h3>
+				<Explorer/>
 			</div>
 		)
 	}

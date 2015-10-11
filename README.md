@@ -10,12 +10,20 @@ http-watcher的简化版，除去了其他东西，只保留了文件服务器�
 
 ### build
 
-```sh
-	go get -u github.com/jteeuwen/go-bindata/...
-	go clone https://github.com/codeskyblue/file-server
-	go build  # you may want to copy file-server binary to $PATH for easy use. prebuilt binary comming soon
-```
+	npm install
+	make prod
 
+### Develop
+Your need to know what is react, and golang.
+In develop mode, Support react hot reload
+
+	npm install
+	make dev
+
+Open another terminal
+
+	go build && ./file-server
+	
 ### Usage
 
 	file-server -port 8000 -root /your/code/root

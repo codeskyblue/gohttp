@@ -4,7 +4,11 @@
 }
 
 .table-name {
-	width: 50%;
+	width: 35%;
+}
+
+table.table {
+	font-family: "Courier New"
 }
 
 .share_file{position:fixed;top:50px;left:50%;margin-left:-121px;padding:10px 10px;width:240px;border:1px solid #d9d9d9;background:#fff;text-align:center}

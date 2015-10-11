@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "font-awesome": "^4.4.0",
+    "humanize": "0.0.9",
     "react": "^0.14.0",
     "react-bootstrap": "^0.27.0",
     "react-dom": "^0.14.0"
