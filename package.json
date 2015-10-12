@@ -21,6 +21,8 @@
     "jquery": "^2.1.4",
     "react": "^0.14.0",
     "react-bootstrap": "^0.27.0",
-    "react-dom": "^0.14.0"
+    "react-dom": "^0.14.0",
+    "underscore": "^1.8.3",
+    "url-join": "0.0.1"
   }
 }

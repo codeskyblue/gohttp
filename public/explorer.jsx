@@ -16,8 +16,9 @@ var Row = ReactBS.Row,
   Col = ReactBS.Col,
   Breadcrumb = ReactBS.Breadcrumb,
   BreadcrumbItem = ReactBS.BreadcrumbItem;
-
-var path = require('path')
+var _ = require('underscore');
+var path = require('path');
+var urljoin = require('url-join');
 
 var FileItem = require('./file-item.jsx')
 
@@ -101,9 +102,24 @@ var PathBreadcrumb = React.createClass({
 var Explorer = React.createClass({
   getInitialState: function(){
     return {
-      data: fileList,
+      data: [],
       hidden: false,
     }
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: location.pathname+"?format=json",
+      dataType: 'json',
+      success: function(data){
+        data = _.sortBy(data, function(item){
+          return item.type+':'+item.name;
+        })
+        this.setState({data: data})
+      }.bind(this),
+      error: function(xhr, status, err){
+        console.log(status, err)
+      }
+    })
   },
   render: function(){
     return (
@@ -130,9 +146,9 @@ var Explorer = React.createClass({
               </tr>
               <tr>
                 <th>
-                  <Button bsSize="xsmall" bsStyle="link" href="..">
+                  <a class="btn btn-default btn-xs" href={urljoin(location.pathname, '..')}>
                     <i className="fa fa-level-up"/>
-                  </Button>
+                  </a>
                 </th>
                 <th className="table-name">Name</th>
                 <th>Size</th>

@@ -5,7 +5,7 @@ var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
 var DropdownButton = require('react-bootstrap').DropdownButton;
 var MenuItem = require('react-bootstrap').MenuItem;
 var Modal = require('react-bootstrap').Modal;
-
+var urljoin = require('url-join');
 
 var FileItem = React.createClass({
 	getInitialState: function(){
@@ -16,7 +16,6 @@ var FileItem = React.createClass({
 		var fileIcon;
 		console.log(fileType);
 		if (fileType == "directory"){
-			console.log("Is dir")
 			fileIcon = <i className="fa fa-folder-open"/>;
 		} else {
 			fileIcon = <i className="fa fa-file-o"/>;
@@ -28,19 +27,20 @@ var FileItem = React.createClass({
 		var open = function(){
 			that.setState({show: true})
 		}
+		var link = urljoin(location.href, this.props.data.name);
 		return (
 			<tr>
 				<td>
 					{fileIcon}
 				</td>
 				<td>
-					<a href={this.props.data.name}>{this.props.data.name}</a>
+					<a href={link}>{this.props.data.name}</a>
 				</td>
 				<td>{humanize.filesize(this.props.data.size)}</td>
 				<td>
 					<div>
 						<ButtonToolbar>
-							<Button bsSize="xsmall" href={this.props.data.name}>
+							<Button bsSize="xsmall" href={link+'?download=true'}>
 								Download <i className="fa fa-download"/>
 							</Button>
 							<Button bsSize="xsmall" onClick={open}>
@@ -56,7 +56,7 @@ var FileItem = React.createClass({
             		<Modal.Title className="text-center">{this.props.data.name}</Modal.Title>
             		<Modal.Body>
             			<div className="text-center">
-            				<img alt='qrcode' src={'/_qr?text='+location.href+this.props.data.name} />
+            				<img alt='qrcode' src={'/_qr?text='+link} />
             			</div>
             		</Modal.Body>
             		<Modal.Footer>

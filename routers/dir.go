@@ -26,59 +26,66 @@ func formatSize(file os.FileInfo) string {
 	return ""
 }
 
-func dirHandler(host, path string, f *os.File, ctx *macaron.Context) {
-	if dirs, err := f.Readdir(-1); err == nil {
-		files := make([]map[string]string, len(dirs)+1)
-		files[0] = map[string]string{
-			"name": "..", "href": "..", "size": "-", "mtime": "-",
-		}
-		for i, d := range dirs {
-			href := d.Name()
-			if d.IsDir() {
-				href += "/"
-			}
-
-			files[i+1] = map[string]string{
-				"href":  href,
-				"name":  d.Name(),
-				"size":  formatSize(d),
-				"mtime": d.ModTime().Format("2006-01-02 15:04:05"),
-				"host":  host,
-				"path":  filepath.Join(path, d.Name()),
-			}
-		}
-		ctx.HTML(200, "dirlist", map[string]interface{}{
-			"dir":   f.Name(),
-			"files": files,
-		})
+func inspectFileInfo(info os.FileInfo) map[string]interface{} {
+	ftype := "file"
+	if info.IsDir() {
+		ftype = "directory"
+	}
+	return map[string]interface{}{
+		"name":  info.Name(),
+		"type":  ftype,
+		"size":  info.Size(),
+		"mtime": info.ModTime().Unix(),
 	}
 }
 
-func NewDirHandler(rootDir string) func(ctx *macaron.Context, req *http.Request, w http.ResponseWriter) {
-	return func(ctx *macaron.Context, req *http.Request, w http.ResponseWriter) {
-		path := ctx.Params("*")
-		if path == "" {
-			path = "."
+func listDirectory(dir string) (data []interface{}, err error) {
+	file, err := os.Open(dir)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+	files, err := file.Readdir(-1)
+	if err != nil {
+		return
+	}
+	data = make([]interface{}, 0, len(files))
+	for _, finfo := range files {
+		data = append(data, inspectFileInfo(finfo))
+	}
+	return
+}
+
+func NewStaticHandler(root string) interface{} {
+	return func(ctx *macaron.Context, w http.ResponseWriter, req *http.Request) {
+		format := req.FormValue("format")
+		if format == "" {
+			format = "html"
 		}
-		fullpath := filepath.Join(rootDir, path)
-		// log.Println(path)
-		file, err := os.Open(fullpath)
+		abspath := filepath.Join(root, req.URL.Path)
+		finfo, err := os.Stat(abspath)
 		if err != nil {
 			ctx.Error(500, err.Error())
 			return
 		}
-		defer file.Close()
-
-		finfo, er := file.Stat()
-		if er != nil {
-			ctx.Error(500, err.Error())
-			return
-		}
 		if finfo.IsDir() {
-			dirHandler(req.Host, path, file, ctx)
+			switch format {
+			case "html":
+				ctx.HTML(200, "dirlist", nil)
+				return
+			case "json":
+				data, err := listDirectory(abspath)
+				if err != nil {
+					ctx.Error(500, err.Error())
+					return
+				}
+				ctx.JSON(200, data)
+			}
 		} else {
-			w.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(path))
-			http.ServeFile(w, req, filepath.Join(rootDir, path))
+			if req.FormValue("download") == "true" {
+				w.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(abspath))
+			}
+			http.ServeFile(w, req, abspath)
 		}
 	}
 }

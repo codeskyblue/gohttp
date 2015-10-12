@@ -9,80 +9,20 @@
     <link href="/-/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="/-/css/style.css" rel="stylesheet">
 
-    <title>dir - {{.dir}}</title>
+    <title>HTTP File Server</title>
   </head>
   <body>
 
     <div class="container">
       <div class="col-md-12" id="content">
       </div>
+    </div>
 
-	  <div class="col-md-12">
-      <table cellspacing=0 class="table">
-        <h5>File server:  <input type="text" value="{{.dir}}"></h5>
-        <thead>
-          <th>File</th>
-          <th>Size</th>
-          <th>Link</th>
-          <th>Last Modified</th>
-        </thead>
-        {{range .files}}
-        <tr>
-          <td class="name">
-            {{if ne .size "-"}}
-            
-            <a href="{{.href}}">{{.name}}</a>
-            {{else}}
-            <a href="{{.href}}">
-              <span class="glyphicon glyphicon-folder-open"></span>
-              <strong>{{.name}}</strong>
-            </a>
-            {{end}}
-          </td>
-          <td>{{ .size }}</td>
-          <td>
-            {{if ne .size "-"}}
-				<a href="{{.href}}">
-				  <span class="glyphicon glyphicon-download-alt"></span>
-				</a>
-				&nbsp;
-				<span data="http://{{.host}}/{{.path}}" file_name="{{.name}}"
-					class="glyphicon glyphicon-qrcode">
-				</span>
-				<span class="qrcode-tmp"></span>
-            {{else}}
-				{{if eq .name ".." }}
-				<button data-toggle="modal" data-target="#upload-modal" class="btn btn-xs btn-success">
-				  <span class="glyphicon glyphicon-upload"></span> upload
-				</button>
-				{{end}}
-            {{end}}
-          </td>
-          <td class="mtime">{{ .mtime }}</td>
-        </tr>
-        {{end}}
-      </table>
-	  </div>
-      <script>
+    <script>
       $(function(){
-		  $("span.glyphicon-qrcode").click(function(){
-			  var url = $(this).attr("data");
-        var file_name = $(this).attr("file_name");
-		      // $("#qr-image").attr("src", "/_qr?text="+url);
-		      // $("#qr-title").text(url);
-          //update qrcode by aTool, do not use modal
-          share_file(url, file_name);
-		  });
-		  $('[data-toggle="tooltip"]').tooltip();
-          $("#btn-upload").click(function(){
-            $("#form-upload").submit();
-          });
-      })
-      function share_file(url, file_name) {
-        document.getElementById("share_file_box").innerHTML = '<div class="full_screen_bg" onclick="this.parentNode.innerHTML=\' \';"></div><div class="share_file"><a href="javascript:;" onclick="this.parentNode.parentNode.innerHTML=\' \';" class="popup_close">×</a><p>下载该文件</p><p class="file_url">'+file_name+'</p><img class="qrcode" width="200" height="200" src="/_qr?text=' + url + '" /><p>打开手机扫一扫，对准二维码扫描即可下载地址。</p></div>';
-        return false;
-      }
-      </script>
+        $('[data-toggle="tooltip"]').tooltip();
+      });
+    </script>
 
       <!-- File Upload Modal -->
       <div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -106,8 +46,7 @@
         </div>
       </div>
 
-      <script type="text/javascript" src="/-/bundle.js" charset="utf-8"></script>
-      {{template "footer" .}}
-    </div>
+    <script type="text/javascript" src="/-/bundle.js" charset="utf-8"></script>
+    {{template "footer" .}}
   </body>
 </html>
