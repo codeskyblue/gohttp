@@ -55,7 +55,7 @@ var FileItem = React.createClass({
             		<Modal.Title className="text-center">{this.props.data.name}</Modal.Title>
             		<Modal.Body>
             			<div className="text-center">
-            				<img alt='qrcode' src={'/_qr?text='+link} />
+            				<img alt='qrcode' src={'/_qr?text='+urljoin(location.href, this.props.data.name)} />
             			</div>
             		</Modal.Body>
             		<Modal.Footer>
