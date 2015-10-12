@@ -90,7 +90,7 @@ var PathBreadcrumb = React.createClass({
     return (
       <Breadcrumb>
         <BreadcrumbItem href="/">
-          $
+          <i className="fa fa-home"/>
         </BreadcrumbItem>
         {items}
       </Breadcrumb>
@@ -142,6 +142,12 @@ var Explorer = React.createClass({
             </thead>
               
             <FileList data={this.state.data} showHidden={this.state.hidden}/>
+            <tfoot>
+              <tr>
+                <td colSpan={5}>README.md # haha
+                </td>
+              </tr>
+            </tfoot>
           </Table>
         </Col>
       </Row>
