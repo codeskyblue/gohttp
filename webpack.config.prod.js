@@ -4,8 +4,6 @@ var path = require('path');
 module.exports = {
 	evtool: 'eval',
 	entry: [
-		'webpack-dev-server/client?http://localhost:3000',
-		'webpack/hot/only-dev-server',
 		"./public/entry.js"
 	],
 	output: {
@@ -18,7 +16,7 @@ module.exports = {
 			{test: /\.css$/, loader: "style!css"},
 			{
 				test: /\.jsx$/, 
-				loaders: ['react-hot', 'babel'],
+				loaders: ['babel'],
 				include: [path.join(__dirname, 'public')]
 			}
 		]

@@ -20,7 +20,8 @@ var _ = require('underscore');
 var path = require('path');
 var urljoin = require('url-join');
 
-var FileItem = require('./file-item.jsx')
+var FileItem = require('./FileItem.jsx')
+var PathBreadcrumb = require('./PathBreadcrumb.jsx')
 
 var fileList = [
   {
@@ -54,9 +55,15 @@ var FileList = React.createClass({
       return true;
     })
     var fileItems = filterData.map(function(item){
-      return (
-        <FileItem key={item.name} data={item}/>
-      )
+      if (item.type == 'directory'){
+        return (
+          <FileItem key={item.name} data={item} onDirectoryChange={that.props.onDirectoryChange} />
+        )
+      } else {
+        return (
+          <FileItem key={item.name} data={item} />
+        )
+      }
     })
     return (
       <tbody>
@@ -66,54 +73,24 @@ var FileList = React.createClass({
   }
 })
 
-var PathBreadcrumb = React.createClass({
-  render: function(){
-    var paths = location.pathname.split('/');
-    paths.pop();
-    paths.shift();
-    var itemPaths = [];
-    var currPath = '/';
-    paths.forEach(function(name){
-      var newPath = path.join(currPath, name);
-      currPath = newPath;
-      itemPaths.push({
-        directory: currPath,
-        name: name
-      })
-    })
-    var items = itemPaths.map(function(subPath){
-      return (
-        <BreadcrumbItem key={subPath.directory} href={subPath.directory}>
-          {subPath.name}
-        </BreadcrumbItem>
-      )
-    })
-    return (
-      <Breadcrumb>
-        <BreadcrumbItem href="/">
-          <i className="fa fa-home"/>
-        </BreadcrumbItem>
-        {items}
-      </Breadcrumb>
-    )
-  }
-})
-
 var Explorer = React.createClass({
   getInitialState: function(){
     return {
       data: [],
       hidden: false,
+      pathname: location.pathname,
     }
   },
-  componentDidMount: function() {
+  loadFilesFromServer: function(){
+    // console.log(this.state)
     $.ajax({
-      url: location.pathname+"?format=json",
+      url: this.state.pathname+"?format=json",
       dataType: 'json',
       success: function(data){
         data = _.sortBy(data, function(item){
           return item.type+':'+item.name;
         })
+        // console.log(data)
         this.setState({data: data})
       }.bind(this),
       error: function(xhr, status, err){
@@ -121,11 +98,22 @@ var Explorer = React.createClass({
       }
     })
   },
+  componentDidMount: function() {
+    this.loadFilesFromServer();
+  },
+  changePath: function(newPath, e){
+    e.preventDefault()
+    // this.setState({pathname: newPath}) // WHY(ssx): setState not set immedietly
+    this.state.pathname = newPath;
+    window.history.pushState("", "", newPath);
+    this.loadFilesFromServer();
+  },
   render: function(){
+    var key = 'hello'
     return (
       <Row>
         <Col md={12}>
-          <PathBreadcrumb/>
+          <PathBreadcrumb data={this.state.pathname} onClick={this.changePath} />
         </Col>
         <Col md={12}>
           <Table striped bordered condensed hover>
@@ -146,9 +134,9 @@ var Explorer = React.createClass({
               </tr>
               <tr>
                 <th>
-                  <a class="btn btn-default btn-xs" href={urljoin(location.pathname, '..')}>
+                  <Button bsSize="xsmall" href={urljoin(location.pathname, '..')}>
                     <i className="fa fa-level-up"/>
-                  </a>
+                  </Button>
                 </th>
                 <th className="table-name">Name</th>
                 <th>Size</th>
@@ -157,10 +145,10 @@ var Explorer = React.createClass({
               </tr>
             </thead>
               
-            <FileList data={this.state.data} showHidden={this.state.hidden}/>
+            <FileList data={this.state.data} showHidden={this.state.hidden} onDirectoryChange={this.changePath} />
             <tfoot>
               <tr>
-                <td colSpan={5}>README.md # haha
+                <td colSpan={5}>README.md # readme not finished
                 </td>
               </tr>
             </tfoot>

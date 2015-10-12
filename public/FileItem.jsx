@@ -14,7 +14,6 @@ var FileItem = React.createClass({
 	render: function(){
 		var fileType = this.props.data.type;
 		var fileIcon;
-		console.log(fileType);
 		if (fileType == "directory"){
 			fileIcon = <i className="fa fa-folder-open"/>;
 		} else {
@@ -27,14 +26,14 @@ var FileItem = React.createClass({
 		var open = function(){
 			that.setState({show: true})
 		}
-		var link = urljoin(location.href, this.props.data.name);
+		var link = urljoin(location.pathname, this.props.data.name);
 		return (
 			<tr>
-				<td>
+				<td className="text-center">
 					{fileIcon}
 				</td>
 				<td>
-					<a href={link}>{this.props.data.name}</a>
+					<a onClick={(e)=>this.props.onDirectoryChange(link, e)} href={link}>{this.props.data.name}</a>
 				</td>
 				<td>{humanize.filesize(this.props.data.size)}</td>
 				<td>
