@@ -4,6 +4,8 @@ go:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq nodejs npm
+  - npm config set registry http://registry.npmjs.org/
+  - npm config set strict-ssl false
   - sudo npm install -g webpack
   - npm install
 script:
