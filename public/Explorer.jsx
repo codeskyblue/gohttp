@@ -22,6 +22,7 @@ var urljoin = require('url-join');
 
 var FileItem = require('./FileItem.jsx')
 var PathBreadcrumb = require('./PathBreadcrumb.jsx')
+var UploadModal = require('./UploadModal.jsx');
 
 var fileList = [
   {
@@ -79,10 +80,10 @@ var Explorer = React.createClass({
       data: [],
       hidden: false,
       pathname: location.pathname,
+      showUpload: false,
     }
   },
   loadFilesFromServer: function(){
-    // console.log(this.state)
     $.ajax({
       url: this.state.pathname+"?format=json",
       dataType: 'json',
@@ -90,7 +91,6 @@ var Explorer = React.createClass({
         data = _.sortBy(data, function(item){
           return item.type+':'+item.name;
         })
-        // console.log(data)
         this.setState({data: data})
       }.bind(this),
       error: function(xhr, status, err){
@@ -109,7 +109,6 @@ var Explorer = React.createClass({
     this.loadFilesFromServer();
   },
   render: function(){
-    var key = 'hello'
     return (
       <Row>
         <Col md={12}>
@@ -121,20 +120,30 @@ var Explorer = React.createClass({
               <tr>
                 <td colSpan={5}>
                   <ButtonToolbar>
-                    <Button bsSize="xsmall">
+                    <Button bsSize="xsmall" onClick={
+                      ()=>this.setState({showUpload: true})
+                    }>
                       Upload <i className="fa fa-upload"/>
                     </Button>
                     <Button bsSize="xsmall"　onClick={
                       ()=>this.setState({hidden: !this.state.hidden})
                     }>
-                      Show Hidden　<input type="checkbox" checked={this.state.hidden}/>
+                      Show Hidden　{
+                        this.state.hidden ? <i className="fa fa-eye"/> : <i className="fa fa-eye-slash"/>
+                      }
                     </Button>
                   </ButtonToolbar>
+                  
+                  <UploadModal onHide={
+                    ()=>this.setState({showUpload: false})} 
+                    show={this.state.showUpload}/>
                 </td>
               </tr>
               <tr>
                 <th>
-                  <Button bsSize="xsmall" href={urljoin(location.pathname, '..')}>
+                  <Button bsSize="xsmall" 
+                    href={path.dirname(location.pathname)}
+                    onClick={(event)=>this.changePath(path.dirname(location.pathname), event)}>
                     <i className="fa fa-level-up"/>
                   </Button>
                 </th>

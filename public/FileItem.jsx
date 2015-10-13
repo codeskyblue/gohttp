@@ -27,6 +27,19 @@ var FileItem = React.createClass({
 			that.setState({show: true})
 		}
 		var link = urljoin(location.pathname, this.props.data.name);
+
+		var ctrlButtons = [];
+		if (this.props.data.type == 'file'){
+			ctrlButtons.push(
+				<Button 
+					bsSize="xsmall" href={link+'?download=true'}>
+					Download <i className="fa fa-download"/>
+				</Button>,
+				<Button bsSize="xsmall" onClick={open}>
+					QRCode <i className="fa fa-qrcode"/>
+				</Button>
+			)
+		}
 		return (
 			<tr>
 				<td className="text-center">
@@ -39,29 +52,25 @@ var FileItem = React.createClass({
 				<td>
 					<div>
 						<ButtonToolbar>
-							<Button bsSize="xsmall" href={link+'?download=true'}>
-								Download <i className="fa fa-download"/>
-							</Button>
-							<Button bsSize="xsmall" onClick={open}>
-								QRCode <i className="fa fa-qrcode"/>
-							</Button>
+							{ctrlButtons}
 						</ButtonToolbar>
+						
 						<Modal
 							bsSize="small"
 							show={this.state.show}
 							onHide={close}
 						>
 							<Modal.Header closeButton>
-            		<Modal.Title className="text-center">{this.props.data.name}</Modal.Title>
-            		<Modal.Body>
-            			<div className="text-center">
-            				<img alt='qrcode' src={'/_qr?text='+urljoin(location.href, this.props.data.name)} />
-            			</div>
-            		</Modal.Body>
-            		<Modal.Footer>
-            			<Button onClick={close}>Close</Button>
-          			</Modal.Footer>
-          		</Modal.Header>
+			            		<Modal.Title className="text-center">{this.props.data.name}</Modal.Title>
+			            		<Modal.Body>
+			            			<div className="text-center">
+			            				<img alt='qrcode' src={'/_qr?text='+urljoin(location.href, this.props.data.name)} />
+			            			</div>
+			            		</Modal.Body>
+			            		<Modal.Footer>
+			            			<Button onClick={close}>Close</Button>
+			          			</Modal.Footer>
+			          		</Modal.Header>
 						</Modal>
 					</div>
 				</td>
