@@ -3,13 +3,25 @@
 
 This is file server writen by golang.
 
-http-watcher的简化版，除去了其他东西，只保留了文件服务器的东西。
+## Usage
+	file-server -port 8000 -root /your/code/root
 
-1. 支持地址的二维码
-2. 资源文件打包进到二进制文件
+	file-server
+		-port=8000: Which port to listen
+		-private=false: Only listen on lookback interface, otherwise listen on all interface
+		-root=".": the HTTP File Server's root directory
 
-### build
+![screenshot](images/screenshot.png)
 
+## Features
+
+1. Support QRCode code generate
+2. All assets package to Standalone binary
+
+## Build
+Suggest install node through [nvm](https://github.com/creationix/nvm)
+
+	npm install -g webpack
 	npm install
 	make prod
 
@@ -24,18 +36,6 @@ Open another terminal
 
 	go build && ./file-server
 	
-### Usage
-
-	file-server -port 8000 -root /your/code/root
-
-	file-server ARGS  # acceptable args list below, -h to show them
-
-		-port=8000: Which port to listen
-		-private=false: Only listen on lookback interface, otherwise listen on all interface
-		-root=".": the HTTP File Server's root directory
-
-![demo](images/demo.png)
-
 ## Thanks
 1. <https://github.com/shenfeng/http-watcher>
 2. <http://segmentfault.com/a/1190000002551952>
