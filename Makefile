@@ -6,8 +6,12 @@
 dev: clean
 	npm start
 
-prod:
+prod: bundle binary
+
+bundle:
 	webpack -p --progress --config webpack.config.prod.js
+
+binary:
 	(cd public; go-bindata -pkg public bundle.js js/ css/ fonts/ font-awesome/...)
 	(cd templates; go-bindata -pkg templates ./...)
 	go build -tags "bindata"

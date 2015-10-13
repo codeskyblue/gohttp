@@ -8,6 +8,7 @@ before_install:
   - npm config set strict-ssl false
   - npm install -g webpack
   - npm install
+  - make bundle
 script:
   - go get -v
   - go test -v ./...

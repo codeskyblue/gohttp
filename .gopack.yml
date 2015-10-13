@@ -9,4 +9,4 @@ excludes:
   - \.git
 script:
   - go get -v
-  - make prod
+  - make binary
