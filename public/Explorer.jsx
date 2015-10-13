@@ -101,6 +101,10 @@ var Explorer = React.createClass({
   },
   componentDidMount: function() {
     this.loadFilesFromServer();
+    var that = this;
+    window.onpopstate = function(event) {
+      that.changePath(location.pathname, event);
+    }
   },
   changePath: function(newPath, e){
     e.preventDefault()
