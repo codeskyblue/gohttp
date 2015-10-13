@@ -1,7 +1,7 @@
 # File Static Server
 [![gorelease](https://dn-gorelease.qbox.me/gorelease-download-blue.svg)](http://gorelease.herokuapp.com/codeskyblue/file-server)
 
-This is file server writen by golang.
+This is file server writen by golang and reactjs.
 
 ## Usage
 	file-server -port 8000 -root /your/code/root
@@ -17,6 +17,8 @@ This is file server writen by golang.
 
 1. Support QRCode code generate
 2. All assets package to Standalone binary
+3. Different file type different icon
+4. Support show or hide hidden files
 
 ## Build
 Suggest install node through [nvm](https://github.com/creationix/nvm)
