@@ -12,7 +12,7 @@ bundle:
 	webpack -p --progress --config webpack.config.prod.js
 
 binary:
-	(cd public; go-bindata -pkg public bundle.js js/ css/ fonts/ font-awesome/...)
+	(cd public; go-bindata -pkg public favicon.ico bundle.js js/ css/ fonts/ font-awesome/...)
 	(cd templates; go-bindata -pkg templates ./...)
 	go get -tags "bindata"
 	go build -tags "bindata"
