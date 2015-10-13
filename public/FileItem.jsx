@@ -7,6 +7,10 @@ var MenuItem = require('react-bootstrap').MenuItem;
 var Modal = require('react-bootstrap').Modal;
 var urljoin = require('url-join');
 
+var FileIcon = require('./FileIcon.jsx');
+var Icon = require('./Icon.jsx');
+
+
 var FileItem = React.createClass({
 	getInitialState: function(){
 		return {show: false};
@@ -14,10 +18,10 @@ var FileItem = React.createClass({
 	render: function(){
 		var fileType = this.props.data.type;
 		var fileIcon;
-		if (fileType == "directory"){
-			fileIcon = <i className="fa fa-folder-open"/>;
+		if (fileType == "directosry"){
+			fileIcon = <Icon name="folder-open" style={{color: "#3366cc"}}/>
 		} else {
-			fileIcon = <i className="fa fa-file-o"/>;
+			fileIcon = <FileIcon fileType={this.props.data.type} fileName={this.props.data.name}/>
 		}
 		var that = this;
 		var close = function(){

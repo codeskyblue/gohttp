@@ -42,7 +42,8 @@ func NewUploadHandler(rootDir string) func(req *http.Request, w http.ResponseWri
 			}
 		}
 
-		ctx.JSON(200, map[string]string{
+		ctx.JSON(200, map[string]interface{}{
+			"success": true,
 			"message": "Upload success",
 		})
 	}

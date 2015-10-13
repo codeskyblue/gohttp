@@ -23,6 +23,7 @@ var urljoin = require('url-join');
 var FileItem = require('./FileItem.jsx')
 var PathBreadcrumb = require('./PathBreadcrumb.jsx')
 var UploadModal = require('./UploadModal.jsx');
+var Icon = require('./Icon.jsx')
 
 var fileList = [
   {
@@ -123,7 +124,7 @@ var Explorer = React.createClass({
                     <Button bsSize="xsmall" onClick={
                       ()=>this.setState({showUpload: true})
                     }>
-                      Upload <i className="fa fa-upload"/>
+                      Upload <Icon name="upload"/>
                     </Button>
                     <Button bsSize="xsmall"　onClick={
                       ()=>this.setState({hidden: !this.state.hidden})
@@ -135,7 +136,10 @@ var Explorer = React.createClass({
                   </ButtonToolbar>
                   
                   <UploadModal onHide={
-                    ()=>this.setState({showUpload: false})} 
+                      ()=>this.setState({showUpload: false})}
+                    onUpload={
+                      ()=>this.loadFilesFromServer()
+                    }
                     show={this.state.showUpload}/>
                 </td>
               </tr>
@@ -144,7 +148,7 @@ var Explorer = React.createClass({
                   <Button bsSize="xsmall" 
                     href={path.dirname(location.pathname)}
                     onClick={(event)=>this.changePath(path.dirname(location.pathname), event)}>
-                    <i className="fa fa-level-up"/>
+                    <Icon name="arrow-up"/>
                   </Button>
                 </th>
                 <th className="table-name">Name</th>
