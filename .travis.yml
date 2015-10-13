@@ -2,14 +2,16 @@ language: go
 go:
   - 1.5
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq nodejs npm
+  - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
+  - nvm install node && nvm alias default node
   - npm config set registry http://registry.npmjs.org/
   - npm config set strict-ssl false
-  - sudo npm install -g webpack
+  - npm install -g webpack
   - npm install
+  - make bundle
 script:
   - go get -v
   - go test -v ./...
 after_success:
+  - go get -u github.com/jteeuwen/go-bindata/...
   - bash -c "$(curl -fsSL http://bitly.com/gorelease)" gorelease
