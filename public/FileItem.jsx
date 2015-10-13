@@ -31,11 +31,11 @@ var FileItem = React.createClass({
 		var ctrlButtons = [];
 		if (this.props.data.type == 'file'){
 			ctrlButtons.push(
-				<Button 
+				<Button key="download"
 					bsSize="xsmall" href={link+'?download=true'}>
 					Download <i className="fa fa-download"/>
 				</Button>,
-				<Button bsSize="xsmall" onClick={open}>
+				<Button key="qrcode" bsSize="xsmall" onClick={open}>
 					QRCode <i className="fa fa-qrcode"/>
 				</Button>
 			)
@@ -54,7 +54,7 @@ var FileItem = React.createClass({
 						<ButtonToolbar>
 							{ctrlButtons}
 						</ButtonToolbar>
-						
+
 						<Modal
 							bsSize="small"
 							show={this.state.show}
