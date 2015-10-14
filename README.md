@@ -1,7 +1,7 @@
 # File Static Server
-[![gorelease](https://dn-gorelease.qbox.me/gorelease-download-blue.svg)](http://gorelease.herokuapp.com/codeskyblue/file-server)
+A http file server written by golang and reactjs.
 
-This is file server writen by golang and reactjs.
+Binary can be download from [![gorelease](https://dn-gorelease.qbox.me/gorelease-download-blue.svg)](http://gorelease.herokuapp.com/codeskyblue/file-server)
 
 ## Usage
 	file-server -port 8000 -root /your/code/root
@@ -11,7 +11,7 @@ This is file server writen by golang and reactjs.
 		-private=false: Only listen on lookback interface, otherwise listen on all interface
 		-root=".": the HTTP File Server's root directory
 
-![screenshot](images/screenshot.png)
+![screenshot](images/fileserv-screenshot.gif)
 
 ## Features
 
@@ -19,6 +19,7 @@ This is file server writen by golang and reactjs.
 2. All assets package to Standalone binary
 3. Different file type different icon
 4. Support show or hide hidden files
+5. Upload support
 
 ## Build
 Suggest install node through [nvm](https://github.com/creationix/nvm)
