@@ -16,31 +16,12 @@
     <div class="container">
       <div class="col-md-12" id="content">
       </div>
+      <div class="col-md-12">
+        {{template "footer" .}}
+      </div>
     </div>
 
-      <!-- File Upload Modal -->
-      <div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="myModalLabel">文件上传</h4>
-            </div>
-            <div class="modal-body">
-              <form id="form-upload" role="form" method="post" enctype="multipart/form-data">
-                  <input class="form-control" name="file" type="file" multiple="multiple" required>
-              </form>
-              ...
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button id="btn-upload" type="button" class="btn btn-primary">上传</button>
-            </div>
-          </div>
-        </div>
-      </div>
 
     <script type="text/javascript" src="/-/bundle.js" charset="utf-8"></script>
-    {{template "footer" .}}
   </body>
 </html>

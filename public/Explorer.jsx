@@ -25,26 +25,6 @@ var PathBreadcrumb = require('./PathBreadcrumb.jsx')
 var UploadModal = require('./UploadModal.jsx');
 var Icon = require('./Icon.jsx')
 
-var fileList = [
-  {
-    name: "hello.js",
-    type: "directory",
-    size: 1323003,
-    mtime: 12283844
-  },
-  {
-    name: "world.md",
-    type: "file",
-    size: 13322,
-    mtime: 122123123844
-  },
-  {
-    name: ".gitignore",
-    type: "file",
-    size: 13322,
-    mtime: 122123123844
-  }
-]
 
 var FileList = React.createClass({
   render: function(){
@@ -79,14 +59,14 @@ var Explorer = React.createClass({
   getInitialState: function(){
     return {
       data: [],
+      historyDepth: 0,
       hidden: false,
-      pathname: location.pathname,
       showUpload: false,
     }
   },
   loadFilesFromServer: function(){
     $.ajax({
-      url: this.state.pathname+"?format=json",
+      url: location.pathname+"?format=json",
       dataType: 'json',
       success: function(data){
         data = _.sortBy(data, function(item){
@@ -103,21 +83,19 @@ var Explorer = React.createClass({
     this.loadFilesFromServer();
     var that = this;
     window.onpopstate = function(event) {
-      that.changePath(location.pathname, event);
+      that.loadFilesFromServer();
     }
   },
   changePath: function(newPath, e){
     e.preventDefault()
-    // this.setState({pathname: newPath}) // WHY(ssx): setState not set immedietly
-    this.state.pathname = newPath;
-    window.history.pushState("", "", newPath);
+    window.history.pushState({}, "", newPath);
     this.loadFilesFromServer();
   },
   render: function(){
     return (
       <Row>
         <Col md={12}>
-          <PathBreadcrumb data={this.state.pathname} onClick={this.changePath} />
+          <PathBreadcrumb data={location.pathname} onClick={this.changePath} />
         </Col>
         <Col md={12}>
           <Table striped bordered condensed hover>
