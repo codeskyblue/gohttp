@@ -5,12 +5,14 @@ var Modal = require('react-bootstrap').Modal;
 var request = require('superagent');
 var Col = require('react-bootstrap').Col;
 var Row = require('react-bootstrap').Row;
-
+var ProgressBar = require('react-bootstrap').ProgressBar;
+var Icon = require('./Icon.jsx');
 
 var UploadModal = React.createClass({
   getInitialState: function() {
     return {
-      message: ""
+      message: "",
+      percent: 0,
     };
   },
   handleDrop: function(files){
@@ -20,19 +22,30 @@ var UploadModal = React.createClass({
     files.forEach((file)=> {
         req.attach('file', file, file.name);
     });
-    req.end(function(err, res){
-      if(res.ok) {
-        console.log(res.body)
-        that.setState({message: res.body.message})
-      } else {
-        that.setState({message: res.text});
-      }
-      var callback = that.props.onUpload;
-      if (callback){
-        callback(res);
-      }
+    req
+      .on('progress', function(e){
+        that.setState({percent: e.percent})
+      })
+      .end(function(err, res){
+        if(res.ok) {
+          that.setState({message: res.body.message})
+        } else {
+          that.setState({message: res.text});
+        }
+        var callback = that.props.onUpload;
+        if (callback){
+          callback(res);
+        }
+      })
+  },
+  onHide: function(){
+    if(this.props.onHide){
+      this.props.onHide();
+    }
+    this.setState({
+      percent: 0,
+      message: "",
     })
-    // req.end(callback);
   },
   render: function() {
     return (
@@ -40,26 +53,28 @@ var UploadModal = React.createClass({
         <Modal
           bsSize="small"
           show={this.props.show}
-          onHide={this.props.onHide}
+          onHide={this.onHide}
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-center">File upload</Modal.Title>
             <Modal.Body>
               <div>
-                <Row>
-                  <Col md={6}>
-                    <Dropzone onDrop={this.handleDrop}>
-                      <div>Drop somethins here </div>
-                    </Dropzone>
-                  </Col>
-                  <Col md={6} show={this.state.message != ""}>
+                <Dropzone onDrop={this.handleDrop} className='dropzone' activeClassName='dropzone-active'>
+                  Drop or click to upload
+                </Dropzone>
+              
+                
+                <h4>Progress</h4>
+                <ProgressBar now={this.state.percent} label="%(percent)s%"/>
+                {this.state.message ?
+                  <div>
                     {this.state.message}
-                  </Col>
-                </Row>
+                  </div>: null
+                }
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <Button onClick={this.props.onHide}>Close</Button>
+              <Button onClick={this.onHide}>Close</Button>
             </Modal.Footer>
           </Modal.Header>
         </Modal>
