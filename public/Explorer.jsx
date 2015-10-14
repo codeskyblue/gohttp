@@ -24,6 +24,7 @@ var FileItem = require('./FileItem.jsx')
 var PathBreadcrumb = require('./PathBreadcrumb.jsx')
 var UploadModal = require('./UploadModal.jsx');
 var Icon = require('./Icon.jsx')
+var Markdown = require('./Markdown.jsx')
 
 
 var FileList = React.createClass({
@@ -143,7 +144,8 @@ var Explorer = React.createClass({
             <FileList data={this.state.data} showHidden={this.state.hidden} onDirectoryChange={this.changePath} />
             <tfoot>
               <tr>
-                <td colSpan={5}>README.md # readme not finished
+                <td colSpan={5}>
+                  <Markdown text="## markdown support is processing" style={{margin: '0px 15px'}}/>
                 </td>
               </tr>
             </tfoot>
