@@ -20,6 +20,7 @@ div.dropzone {
 	border-color: #666;
 	border-style: dashed;
 	border-radius: 5px;
+	cursor: pointer;
 }
 
 div.dropzone-active {

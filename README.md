@@ -20,6 +20,7 @@ Binary can be download from [![gorelease](https://dn-gorelease.qbox.me/gorelease
 3. Different file type different icon
 4. Support show or hide hidden files
 5. Upload support
+6. README.md preview
 
 ## Build
 Suggest install node through [nvm](https://github.com/creationix/nvm)
@@ -44,3 +45,4 @@ Open another terminal
 2. <http://segmentfault.com/a/1190000002551952>
 3. [update package.json dependencies](http://stackoverflow.com/questions/16073603/how-do-i-update-each-dependency-in-package-json-to-the-latest-version)
 4. [react hot reload QA](https://github.com/gaearon/react-hot-loader/blob/master/docs/Troubleshooting.md)
+5. <https://github.com/evilstreak/markdown-js>

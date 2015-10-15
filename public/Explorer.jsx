@@ -25,6 +25,7 @@ var PathBreadcrumb = require('./PathBreadcrumb.jsx')
 var UploadModal = require('./UploadModal.jsx');
 var Icon = require('./Icon.jsx')
 var Markdown = require('./Markdown.jsx')
+var FilePreview = require('./FilePreview.jsx');
 
 
 var FileList = React.createClass({
@@ -63,6 +64,7 @@ var Explorer = React.createClass({
       historyDepth: 0,
       hidden: false,
       showUpload: false,
+      readmeFile: null,
     }
   },
   loadFilesFromServer: function(){
@@ -74,11 +76,29 @@ var Explorer = React.createClass({
           return item.type+':'+item.name;
         })
         this.setState({data: data})
+        this.loadReadmeFromFiles(data)
       }.bind(this),
       error: function(xhr, status, err){
         console.log(status, err)
       }
     })
+  },
+  loadReadmeFromFiles: function(data){
+    var readmes = _.filter(data, function(v){
+      return _.contains(['readme', 'readme.md', 'readme.txt'], v.name.toLowerCase())
+    });
+    var readmeFile = _.max(readmes, function(v){
+      var ext = path.extname(v.name.toLowerCase());
+      if (ext == '.md') return 3;
+      if (ext == '.txt') return 2;
+      return 1;
+    })
+    if (readmeFile == -Infinity) {
+      readmeFile = null;
+    } else {
+      readmeFile = path.join(location.pathname, readmeFile.name)
+    }
+    this.setState({readmeFile: readmeFile})
   },
   componentDidMount: function() {
     this.loadFilesFromServer();
@@ -144,9 +164,12 @@ var Explorer = React.createClass({
             <FileList data={this.state.data} showHidden={this.state.hidden} onDirectoryChange={this.changePath} />
             <tfoot>
               <tr>
-                <td colSpan={5}>
-                  <Markdown text="## markdown support is processing" style={{margin: '0px 15px'}}/>
-                </td>
+                { 
+                  this.state.readmeFile ? (
+                    <td colSpan={5}>
+                      <FilePreview fileName={this.state.readmeFile}/>
+                    </td>) : null
+                }
               </tr>
             </tfoot>
           </Table>
