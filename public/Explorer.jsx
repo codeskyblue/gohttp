@@ -11,6 +11,7 @@ var _ = require('underscore');
 var path = require('path');
 var urljoin = require('url-join');
 var humanize = require('humanize')
+var request = require('superagent')
 
 var FileItem = require('./FileItem.jsx')
 var PathBreadcrumb = require('./PathBreadcrumb.jsx')
@@ -57,7 +58,17 @@ var Explorer = React.createClass({
       hidden: false,
       showUpload: false,
       readmeFile: null,
+      readmeText: "",
       pathname: decodeURI(location.pathname),
+    }
+  },
+  componentDidMount: function() {
+    this.loadFilesFromServer();
+    var that = this;
+    window.onpopstate = function(event) {
+      that.setState({pathname: decodeURI(location.pathname)}, function(){
+        that.loadFilesFromServer();
+      })
     }
   },
   loadFilesFromServer: function(){
@@ -93,14 +104,19 @@ var Explorer = React.createClass({
     } else {
       readmeFile = path.join(this.state.pathname, readmeFile.name)
     }
-    this.setState({readmeFile: readmeFile})
-  },
-  componentDidMount: function() {
-    this.loadFilesFromServer();
+    this.setState({readmeFile: readmeFile, readmeText: "loading ..."})
     var that = this;
-    window.onpopstate = function(event) {
-      that.loadFilesFromServer();
-    }
+    readmeFile && request.get(readmeFile)
+      .end(function(err, res){
+        if (err){
+          console.log(err);
+          return
+        }
+        that.setState({
+          readmeFile: readmeFile,
+          readmeText: res.text,
+        })
+      })
   },
   changePath: function(newPath, e){
     e.preventDefault()
@@ -121,10 +137,10 @@ var Explorer = React.createClass({
               <tr>
                 <td colSpan={5}>
                   <ButtonToolbar>
-                    <Button bsSize="xsmall" onClick={
-                      ()=>this.setState({showUpload: true})
-                    }>
-                      Upload <Icon name="upload"/>
+                    <Button bsSize="xsmall" 
+                      href={path.dirname(this.state.pathname)}
+                      onClick={(event)=>this.changePath(path.dirname(this.state.pathname), event)}>
+                      Up <Icon name="arrow-up"/>
                     </Button>
                     <Button bsSize="xsmall"　onClick={
                       ()=>this.setState({hidden: !this.state.hidden})
@@ -132,6 +148,11 @@ var Explorer = React.createClass({
                       Show Hidden　{
                         this.state.hidden ? <i className="fa fa-eye"/> : <i className="fa fa-eye-slash"/>
                       }
+                    </Button>
+                    <Button bsSize="xsmall" onClick={
+                      ()=>this.setState({showUpload: true})
+                    }>
+                      Upload <Icon name="upload"/>
                     </Button>
                   </ButtonToolbar>
                   
@@ -144,12 +165,8 @@ var Explorer = React.createClass({
                 </td>
               </tr>
               <tr>
-                <th>
-                  <Button bsSize="xsmall" 
-                    href={path.dirname(this.state.pathname)}
-                    onClick={(event)=>this.changePath(path.dirname(this.state.pathname), event)}>
-                    <Icon name="arrow-up"/>
-                  </Button>
+                <th style={{textAlign: 'center'}}>
+                  #
                 </th>
                 <th className="table-name">Name</th>
                 <th>Size</th>
@@ -164,7 +181,7 @@ var Explorer = React.createClass({
                 { 
                   this.state.readmeFile ? (
                     <td colSpan={5}>
-                      <FilePreview fileName={this.state.readmeFile}/>
+                      <FilePreview fileName={this.state.readmeFile} content={this.state.readmeText} />
                     </td>) : null
                 }
               </tr>

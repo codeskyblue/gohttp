@@ -58,11 +58,8 @@ var UploadModal = React.createClass({
               <div>
                 <Dropzone onDrop={this.handleDrop} className='dropzone' activeClassName='dropzone-active'>
                   Drop or click to upload
+                  <ProgressBar now={this.state.percent} label="%(percent)s%"/>
                 </Dropzone>
-              
-                
-                <h4>Progress</h4>
-                <ProgressBar now={this.state.percent} label="%(percent)s%"/>
                 {this.state.message ?
                   <div>
                     {this.state.message}
