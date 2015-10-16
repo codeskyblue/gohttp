@@ -3,22 +3,14 @@
 // refs:
 // https://github.com/taijinlee/humanize
 
-var humanize = require('humanize')
 var React = require('react')
-var Table = require('react-bootstrap').Table;
-var Button = require('react-bootstrap').Button;
-var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
-var DropdownButton = require('react-bootstrap').DropdownButton;
-var MenuItem = require('react-bootstrap').MenuItem;
-var Modal = require('react-bootstrap').Modal;
-var ReactBS = require('react-bootstrap');
-var Row = ReactBS.Row,
-  Col = ReactBS.Col,
-  Breadcrumb = ReactBS.Breadcrumb,
-  BreadcrumbItem = ReactBS.BreadcrumbItem;
+var {Row, Col, ButtonToolbar, MenuItem, Modal,
+  DropdownButton, Breadcrumb, BreadcrumbItem, Button, Table} = require('react-bootstrap');
+
 var _ = require('underscore');
 var path = require('path');
 var urljoin = require('url-join');
+var humanize = require('humanize')
 
 var FileItem = require('./FileItem.jsx')
 var PathBreadcrumb = require('./PathBreadcrumb.jsx')
@@ -65,11 +57,14 @@ var Explorer = React.createClass({
       hidden: false,
       showUpload: false,
       readmeFile: null,
+      pathname: decodeURI(location.pathname),
     }
   },
   loadFilesFromServer: function(){
+    var that = this;
     $.ajax({
-      url: location.pathname+"?format=json",
+      url: that.state.pathname,
+      data: {format: 'json'},
       dataType: 'json',
       success: function(data){
         data = _.sortBy(data, function(item){
@@ -96,7 +91,7 @@ var Explorer = React.createClass({
     if (readmeFile == -Infinity) {
       readmeFile = null;
     } else {
-      readmeFile = path.join(location.pathname, readmeFile.name)
+      readmeFile = path.join(this.state.pathname, readmeFile.name)
     }
     this.setState({readmeFile: readmeFile})
   },
@@ -109,14 +104,16 @@ var Explorer = React.createClass({
   },
   changePath: function(newPath, e){
     e.preventDefault()
+    this.setState({pathname: newPath}, function(){
+      this.loadFilesFromServer();
+    })
     window.history.pushState({}, "", newPath);
-    this.loadFilesFromServer();
   },
   render: function(){
     return (
       <Row>
         <Col md={12}>
-          <PathBreadcrumb data={location.pathname} onClick={this.changePath} />
+          <PathBreadcrumb data={this.state.pathname} onClick={this.changePath} />
         </Col>
         <Col md={12}>
           <Table striped bordered condensed hover>
@@ -149,8 +146,8 @@ var Explorer = React.createClass({
               <tr>
                 <th>
                   <Button bsSize="xsmall" 
-                    href={path.dirname(location.pathname)}
-                    onClick={(event)=>this.changePath(path.dirname(location.pathname), event)}>
+                    href={path.dirname(this.state.pathname)}
+                    onClick={(event)=>this.changePath(path.dirname(this.state.pathname), event)}>
                     <Icon name="arrow-up"/>
                   </Button>
                 </th>

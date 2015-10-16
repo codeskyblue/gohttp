@@ -1,7 +1,7 @@
 var React = require('react');
-var Markdown = require('./Markdown.jsx');
 var request = require('superagent')
 var path = require('path');
+var Markdown = require('./Markdown.jsx');
 
 
 // FIXME(ssx): Here got a duplicated request problem.
@@ -46,6 +46,7 @@ var FilePreview = React.createClass({
 		var ext = path.extname(fileName.toLowerCase());
 		switch(ext){
 		case "":
+			return <span>{this.state.content}</span>;
 		case ".txt":
 			return <pre>{this.state.content}</pre>;
 		case ".md":

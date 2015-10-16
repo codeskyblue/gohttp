@@ -1,12 +1,9 @@
 var React = require('react');
+var {Col, Row, ProgressBar, Modal, Button} = require('react-bootstrap');
 var Dropzone = require('react-dropzone');
-var Button = require('react-bootstrap').Button;
-var Modal = require('react-bootstrap').Modal;
-var request = require('superagent');
-var Col = require('react-bootstrap').Col;
-var Row = require('react-bootstrap').Row;
-var ProgressBar = require('react-bootstrap').ProgressBar;
 var Icon = require('./Icon.jsx');
+var request = require('superagent');
+
 
 var UploadModal = React.createClass({
   getInitialState: function() {

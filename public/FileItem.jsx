@@ -1,14 +1,11 @@
-var humanize = require('humanize')
 var React = require('react')
-var Button = require('react-bootstrap').Button;
-var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
-var DropdownButton = require('react-bootstrap').DropdownButton;
-var MenuItem = require('react-bootstrap').MenuItem;
-var Modal = require('react-bootstrap').Modal;
+var {ButtonToolbar, DropdownButton, Button, 
+	MenuItem, Modal} = require('react-bootstrap');
+var humanize = require('humanize')
 var urljoin = require('url-join');
 
-var FileIcon = require('./FileIcon.jsx');
 var Icon = require('./Icon.jsx');
+var FileIcon = require('./FileIcon.jsx');
 
 
 var FileItem = React.createClass({

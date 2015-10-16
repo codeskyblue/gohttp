@@ -1,6 +1,6 @@
 var React = require('react');
-var Icon = require('./Icon.jsx');
 var path = require('path');
+var Icon = require('./Icon.jsx');
 
 
 var FindIcon = React.createClass({
