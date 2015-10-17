@@ -2,7 +2,7 @@
 
 package modules
 
-import "github.com/Unknwon/macaron"
+import "gopkg.in/macaron.v1"
 
 var (
 	Public = macaron.Static("public", macaron.StaticOptions{

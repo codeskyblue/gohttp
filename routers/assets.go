@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/Unknwon/macaron"
+	"gopkg.in/macaron.v1"
 )
 
 func AssetsHandler(r *http.Request, w http.ResponseWriter, ctx *macaron.Context) {

@@ -7,16 +7,19 @@ import (
 	"net/http"
 
 	"strconv"
+	"strings"
 
-	"github.com/Unknwon/macaron"
+	"github.com/codeskyblue/auth"
 	"github.com/codeskyblue/file-server/modules"
 	"github.com/codeskyblue/file-server/routers"
+	"gopkg.in/macaron.v1"
 )
 
 type Configure struct {
-	port    int
-	root    string
-	private bool
+	port     int
+	root     string
+	private  bool
+	httpauth string
 }
 
 var gcfg = Configure{}
@@ -31,6 +34,7 @@ func init() {
 	flag.IntVar(&gcfg.port, "port", 8000, "Which port to listen")
 	flag.StringVar(&gcfg.root, "root", ".", "Watched root directory for filesystem events, also the HTTP File Server's root directory")
 	flag.BoolVar(&gcfg.private, "private", false, "Only listen on lookback interface, otherwise listen on all interface")
+	flag.StringVar(&gcfg.httpauth, "auth", "", "Basic Authentication (ex: username:password)")
 }
 
 func initRouters() {
@@ -47,6 +51,14 @@ func initRouters() {
 		defer resp.Body.Close()
 		io.Copy(w, resp.Body)
 	}
+	// HTTP Basic Authentication
+	userpass := strings.SplitN(gcfg.httpauth, ":", 2)
+	if len(userpass) != 2 {
+		log.Fatal("http auth need user:pass format")
+	}
+	user, pass := userpass[0], userpass[1]
+	m.Use(auth.Basic(user, pass))
+
 	m.Get("/-/:rand(.*).hot-update.:ext(.*)", ReloadProxy)
 	m.Get("/-/bundle.js", ReloadProxy)
 }

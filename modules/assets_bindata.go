@@ -3,10 +3,10 @@
 package modules
 
 import (
-	"github.com/Unknwon/macaron"
 	"github.com/codeskyblue/file-server/public"
 	"github.com/codeskyblue/file-server/templates"
-	"github.com/macaron-contrib/bindata"
+	"github.com/go-macaron/bindata"
+	"gopkg.in/macaron.v1"
 )
 
 var Public = macaron.Static("public",
