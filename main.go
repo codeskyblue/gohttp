@@ -12,6 +12,7 @@ import (
 	"github.com/codeskyblue/auth"
 	"github.com/codeskyblue/file-server/modules"
 	"github.com/codeskyblue/file-server/routers"
+	"github.com/go-macaron/gzip"
 	"gopkg.in/macaron.v1"
 )
 
@@ -30,6 +31,7 @@ func init() {
 	m = macaron.Classic()
 	m.Use(modules.Public)
 	m.Use(modules.Renderer)
+	m.Use(gzip.Gziper())
 
 	flag.IntVar(&gcfg.port, "port", 8000, "Which port to listen")
 	flag.StringVar(&gcfg.root, "root", ".", "Watched root directory for filesystem events, also the HTTP File Server's root directory")

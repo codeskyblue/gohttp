@@ -23,6 +23,7 @@ Binary can be download from [gorelease](http://gorelease.herokuapp.com/codeskybl
 5. Upload support
 6. README.md preview
 7. HTTP Basic Auth
+8. Gzip support
 
 ## Build
 Suggest install node through [nvm](https://github.com/creationix/nvm)
