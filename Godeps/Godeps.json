@@ -21,8 +21,28 @@
 			"Rev": "453699d2ec66c3e855a17215fa7b498f2fab12f9"
 		},
 		{
+			"ImportPath": "github.com/go-macaron/gzip",
+			"Rev": "4938e9be6b279d8426cb1c89a6bcf7af70b0c21d"
+		},
+		{
 			"ImportPath": "github.com/go-macaron/inject",
 			"Rev": "c5ab7bf3a307593cd44cb272d1a5beea473dd072"
+		},
+		{
+			"ImportPath": "github.com/klauspost/compress/flate",
+			"Rev": "cc3dd5b547c647bb58b74d005457c7f82055c422"
+		},
+		{
+			"ImportPath": "github.com/klauspost/compress/gzip",
+			"Rev": "cc3dd5b547c647bb58b74d005457c7f82055c422"
+		},
+		{
+			"ImportPath": "github.com/klauspost/cpuid",
+			"Rev": "8d9fe9648674c9699346aa4a5456cc9e1c0a96db"
+		},
+		{
+			"ImportPath": "github.com/klauspost/crc32",
+			"Rev": "f8d2e12057f7ef26ae42ecfa42697f4bdc32d7eb"
 		},
 		{
 			"ImportPath": "gopkg.in/ini.v1",
