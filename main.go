@@ -53,11 +53,10 @@ func initRouters() {
 	}
 	// HTTP Basic Authentication
 	userpass := strings.SplitN(gcfg.httpauth, ":", 2)
-	if len(userpass) != 2 {
-		log.Fatal("http auth need user:pass format")
+	if len(userpass) == 2 {
+		user, pass := userpass[0], userpass[1]
+		m.Use(auth.Basic(user, pass))
 	}
-	user, pass := userpass[0], userpass[1]
-	m.Use(auth.Basic(user, pass))
 
 	m.Get("/-/:rand(.*).hot-update.:ext(.*)", ReloadProxy)
 	m.Get("/-/bundle.js", ReloadProxy)
