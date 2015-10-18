@@ -17,7 +17,7 @@
 			"Rev": "47d7d2b81a44157600669037e11e9ddfbf16745f"
 		},
 		{
-			"ImportPath": "github.com/codeskyblue/auth",
+			"ImportPath": "github.com/go-macaron/auth",
 			"Rev": "453699d2ec66c3e855a17215fa7b498f2fab12f9"
 		},
 		{
