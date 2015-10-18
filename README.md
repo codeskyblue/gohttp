@@ -17,13 +17,14 @@ Binary can be download from [gorelease](http://gorelease.herokuapp.com/codeskybl
 
 ## Features
 1. Support QRCode code generate
-2. All assets package to Standalone binary
-3. Different file type different icon
-4. Support show or hide hidden files
-5. Upload support
-6. README.md preview
-7. HTTP Basic Auth
-8. Gzip support
+1. All assets package to Standalone binary
+1. Different file type different icon
+1. Support show or hide hidden files
+1. Upload support
+1. README.md preview
+1. HTTP Basic Auth
+1. Gzip support
+1. When only one dir under dir, path will combine two together
 
 ## Build
 Suggest install node through [nvm](https://github.com/creationix/nvm)

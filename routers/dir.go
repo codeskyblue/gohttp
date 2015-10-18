@@ -2,6 +2,7 @@ package routers
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -26,17 +27,40 @@ func formatSize(file os.FileInfo) string {
 	return ""
 }
 
-func inspectFileInfo(info os.FileInfo) map[string]interface{} {
-	ftype := "file"
+func deepPath(basedir, name string) string {
+	isDir := true
+	for isDir {
+		finfos, err := ioutil.ReadDir(filepath.Join(basedir, name))
+		if err != nil || len(finfos) != 1 {
+			return name
+		}
+		if finfos[0].IsDir() {
+			name = filepath.Join(name, finfos[0].Name())
+		} else {
+			break
+		}
+	}
+	return name
+}
+
+func inspectFileInfo(basedir string, info os.FileInfo) map[string]interface{} {
+	name := info.Name()
 	if info.IsDir() {
-		ftype = "directory"
+		return map[string]interface{}{
+			"name":  deepPath(basedir, name),
+			"type":  "directory",
+			"size":  info.Size(),
+			"mtime": info.ModTime().Unix(),
+		}
+	} else {
+		return map[string]interface{}{
+			"name":  info.Name(),
+			"type":  "file",
+			"size":  info.Size(),
+			"mtime": info.ModTime().Unix(),
+		}
 	}
-	return map[string]interface{}{
-		"name":  info.Name(),
-		"type":  ftype,
-		"size":  info.Size(),
-		"mtime": info.ModTime().Unix(),
-	}
+
 }
 
 func listDirectory(dir string) (data []interface{}, err error) {
@@ -51,7 +75,7 @@ func listDirectory(dir string) (data []interface{}, err error) {
 	}
 	data = make([]interface{}, 0, len(files))
 	for _, finfo := range files {
-		data = append(data, inspectFileInfo(finfo))
+		data = append(data, inspectFileInfo(dir, finfo))
 	}
 	return
 }
