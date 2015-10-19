@@ -2,7 +2,6 @@ package routers
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -17,12 +16,25 @@ func NewUploadHandler(rootDir string) func(req *http.Request, w http.ResponseWri
 		err := req.ParseMultipartForm(100 << 20) // max memory 100M
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			log.Println("Hi", err)
 			return
 		}
-		log.Println(ctx.Params("*"))
+		if len(req.MultipartForm.File["file"]) == 0 {
+			http.Error(w, "Need multipart file", http.StatusInternalServerError)
+			return
+		}
+
 		path := strings.Replace(ctx.Params("*"), "..", "", -1)
 		dirpath := filepath.Join(rootDir, path)
+
+		name := req.FormValue("name")
+		version := req.FormValue("version")
+		if name != "" && version != "" {
+			base := filepath.Join(dirpath, name)
+			symlinkPath := filepath.Join(base, name+"-latest")
+			os.Symlink(name+"-"+version, symlinkPath)
+			dirpath = filepath.Join(base, name+"-"+version)
+			os.MkdirAll(dirpath, 0755)
+		}
 		for _, mfile := range req.MultipartForm.File["file"] {
 			file, err := mfile.Open()
 			defer file.Close()
@@ -38,6 +50,7 @@ func NewUploadHandler(rootDir string) func(req *http.Request, w http.ResponseWri
 			defer dst.Close()
 			if _, err := io.Copy(dst, file); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
 				return
 			}
 		}

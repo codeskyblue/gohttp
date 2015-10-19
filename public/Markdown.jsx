@@ -8,7 +8,7 @@ var Markdown = React.createClass({
 			<div
 				style={this.props.style} 
 				dangerouslySetInnerHTML={{
-            	__html: markdown.toHTML(this.props.text)
+            	__html: markdown.toHTML(this.props.text, 'Maruku')
           	}}/>
 		);
 	}

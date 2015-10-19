@@ -43,7 +43,34 @@ In develop mode, Support react hot reload
 Open another terminal
 
 	go build && ./file-server
-	
+
+### API
+Upload
+
+`POST /upload-dir`
+
+Field name | Description | Example
+-----------|-------------|--------
+file       | Upload file | file=@upload.txt
+path       | Upload path(optional) | path=/tmp/
+name       | Save name (optional, need version set)  | name=foo
+version    | Upload version | version=1.2.0
+
+Use CURL
+
+	# Normal upload
+	curl -F file=@upload.txt ${SERVER}
+
+	# Versioned upload
+	curl -F file=@foo-windows.txt -F file=@foo-mac.txt -F name=foo -F version=1.0.1 ${SERVER}
+
+	# will create dir structure
+	foo/
+	  |- foo-latest(symlink) -> foo-1.0.1
+	  `- foo-1.0.1/
+	      |- foo-windows.txt
+	      `- foo-mac.txt
+
 ## Thanks
 1. <https://github.com/shenfeng/http-watcher>
 2. <http://segmentfault.com/a/1190000002551952>

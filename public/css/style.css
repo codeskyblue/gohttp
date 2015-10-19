@@ -11,6 +11,18 @@ table.table {
 	font-family: "Courier New"
 }
 
+table {
+	border: 1px solid;
+}
+
+table tr td {
+	border: 1px solid;
+}
+
+table tr th {
+	border: 1px solid;
+}
+
 div.dropzone {
 	width: 100%;
 	/*height: 70px;*/

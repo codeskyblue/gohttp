@@ -25,6 +25,7 @@ _testmain.go
 *.exe
 *.test
 *.prof
+.DS_Store
 
 node_modules/
 file-server

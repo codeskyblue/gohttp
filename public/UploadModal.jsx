@@ -21,7 +21,9 @@ var UploadModal = React.createClass({
     });
     req
       .on('progress', function(e){
-        that.setState({percent: e.percent})
+        if (typeof e.percent == "number"){
+          that.setState({percent: e.percent})
+        }
       })
       .end(function(err, res){
         if(res.ok) {
