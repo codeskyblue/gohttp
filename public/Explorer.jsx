@@ -5,7 +5,7 @@
 
 var React = require('react')
 var {Row, Col, ButtonToolbar, MenuItem, Modal,
-  DropdownButton, Breadcrumb, BreadcrumbItem, Button, Table} = require('react-bootstrap');
+  Panel, DropdownButton, Breadcrumb, BreadcrumbItem, Button, Table} = require('react-bootstrap');
 
 var _ = require('underscore');
 var path = require('path');
@@ -176,17 +176,13 @@ var Explorer = React.createClass({
             </thead>
               
             <FileList data={this.state.data} showHidden={this.state.hidden} onDirectoryChange={this.changePath} />
-            <tfoot>
-              <tr>
-                { 
-                  this.state.readmeFile ? (
-                    <td colSpan={5}>
-                      <FilePreview fileName={this.state.readmeFile} content={this.state.readmeText} />
-                    </td>) : null
-                }
-              </tr>
-            </tfoot>
           </Table>
+          { 
+            this.state.readmeFile ? (
+              <Panel header={path.basename(this.state.readmeFile)}>
+                <FilePreview fileName={this.state.readmeFile} content={this.state.readmeText} />
+              </Panel>) : null
+          }
         </Col>
       </Row>
     )
