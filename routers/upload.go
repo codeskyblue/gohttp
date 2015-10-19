@@ -30,10 +30,11 @@ func NewUploadHandler(rootDir string) func(req *http.Request, w http.ResponseWri
 		version := req.FormValue("version")
 		if name != "" && version != "" {
 			base := filepath.Join(dirpath, name)
-			symlinkPath := filepath.Join(base, name+"-latest")
-			os.Symlink(name+"-"+version, symlinkPath)
 			dirpath = filepath.Join(base, name+"-"+version)
 			os.MkdirAll(dirpath, 0755)
+
+			symlinkPath := filepath.Join(base, name+"-latest")
+			os.Symlink(name+"-"+version, symlinkPath)
 		}
 		for _, mfile := range req.MultipartForm.File["file"] {
 			file, err := mfile.Open()
