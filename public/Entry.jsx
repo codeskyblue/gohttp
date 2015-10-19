@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var Content = require('./content.jsx')
+var Content = require('./Content.jsx')
 
 
 ReactDOM.render(
