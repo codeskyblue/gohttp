@@ -40,7 +40,7 @@ func init() {
 }
 
 func initRouters() {
-	m.Get("/_qr", routers.Qrcode)
+	m.Get("/$qrcode", routers.Qrcode)
 	m.Get("/*", routers.NewStaticHandler(gcfg.root))
 	m.Post("/*", routers.NewUploadHandler(gcfg.root))
 	m.Get("/$zip/*", routers.NewZipDownloadHandler(gcfg.root))
