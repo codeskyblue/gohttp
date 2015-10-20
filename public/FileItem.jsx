@@ -40,6 +40,13 @@ var FileItem = React.createClass({
 					QRCode <i className="fa fa-qrcode"/>
 				</Button>
 			)
+		} else if (this.props.data.type == 'directory') {
+			ctrlButtons.push(
+				<Button key="zip-download"
+					bsSize="xsmall" href={urljoin('/$zip', link)}>
+					Download Zip <i className="fa fa-download"/>
+				</Button>
+			)
 		}
 		return (
 			<tr>

@@ -43,6 +43,8 @@ func initRouters() {
 	m.Get("/_qr", routers.Qrcode)
 	m.Get("/*", routers.NewStaticHandler(gcfg.root))
 	m.Post("/*", routers.NewUploadHandler(gcfg.root))
+	m.Get("/$zip/*", routers.NewZipDownloadHandler(gcfg.root))
+
 	ReloadProxy := func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Debug, Hot reload", r.Host)
 		resp, err := http.Get("http://localhost:3000" + r.RequestURI)
