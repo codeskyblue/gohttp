@@ -25,6 +25,7 @@ Binary can be download from [gorelease](http://gorelease.herokuapp.com/codeskybl
 1. HTTP Basic Auth
 1. Gzip support
 1. When only one dir under dir, path will combine two together
+1. Directory zip download
 
 ## Build
 Suggest install node through [nvm](https://github.com/creationix/nvm)
