@@ -14,4 +14,10 @@ config.plugins.push(
 	new webpack.HotModuleReplacementPlugin(),
 	new webpack.NoErrorsPlugin())
 
+config.module.loaders.push(
+	{
+		test: /\.jsx$/, 
+		loaders: ['react-hot', 'babel'],
+		include: [path.join(__dirname, 'public')]
+	})
 module.exports = config;

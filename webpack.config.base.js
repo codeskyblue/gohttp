@@ -9,12 +9,7 @@ module.exports = {
 	},
 	module: {
 		loaders: [
-			{test: /\.css$/, loader: "style!css"},
-			{
-				test: /\.jsx$/, 
-				loaders: ['babel'],
-				include: [path.join(__dirname, 'public')]
-			}
+			{test: /\.css$/, loader: "style!css"}
 		]
 	},
 	plugins: [
