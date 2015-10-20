@@ -1,3 +1,4 @@
+var path = require('path');
 var baseConfig = require('./webpack.config.base');
 var config = Object.create(baseConfig);
 
