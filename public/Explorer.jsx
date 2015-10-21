@@ -57,8 +57,8 @@ var Explorer = React.createClass({
       historyDepth: 0,
       hidden: false,
       showUpload: false,
-      readmeFile: null,
-      readmeText: "",
+      previewFile: null,
+      previewText: "",
       pathname: decodeURI(location.pathname),
     }
   },
@@ -113,8 +113,8 @@ var Explorer = React.createClass({
           return
         }
         that.setState({
-          readmeFile: readmeFile,
-          readmeText: res.text,
+          previewFile: readmeFile,
+          previewText: res.text,
         })
       })
   },
@@ -178,9 +178,9 @@ var Explorer = React.createClass({
             <FileList data={this.state.data} showHidden={this.state.hidden} onDirectoryChange={this.changePath} />
           </Table>
           { 
-            this.state.readmeFile ? (
-              <Panel header={path.basename(this.state.readmeFile)}>
-                <FilePreview fileName={this.state.readmeFile} content={this.state.readmeText} />
+            this.state.previewFile ? (
+              <Panel header={path.basename(this.state.previewFile)}>
+                <FilePreview fileName={this.state.previewFile} content={this.state.previewText} />
               </Panel>) : null
           }
         </Col>
