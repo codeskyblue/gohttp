@@ -104,7 +104,10 @@ var Explorer = React.createClass({
     } else {
       readmeFile = path.join(this.state.pathname, readmeFile.name)
     }
-    this.setState({readmeFile: readmeFile, readmeText: "loading ..."})
+
+    // loading
+    this.setState({previewFile: readmeFile, previewText: "loading ..."})
+
     var that = this;
     readmeFile && request.get(readmeFile)
       .end(function(err, res){
