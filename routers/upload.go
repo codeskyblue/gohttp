@@ -2,9 +2,11 @@ package routers
 
 import (
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"gopkg.in/macaron.v1"
@@ -13,11 +15,14 @@ import (
 // Handle Upload file
 func NewUploadHandler(rootDir string) func(req *http.Request, w http.ResponseWriter, ctx *macaron.Context) {
 	return func(req *http.Request, w http.ResponseWriter, ctx *macaron.Context) {
-		err := req.ParseMultipartForm(100 << 20) // max memory 100M
+		err := req.ParseMultipartForm(1024 << 20) // max memory 100M
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		defer func() {
+			runtime.GC()
+		}()
 		if len(req.MultipartForm.File["file"]) == 0 {
 			http.Error(w, "Need multipart file", http.StatusInternalServerError)
 			return
@@ -50,8 +55,8 @@ func NewUploadHandler(rootDir string) func(req *http.Request, w http.ResponseWri
 			}
 			defer dst.Close()
 			if _, err := io.Copy(dst, file); err != nil {
+				log.Println("Handle upload file:", err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
 				return
 			}
 		}
