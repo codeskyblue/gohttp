@@ -63,7 +63,7 @@ var FilePreview = React.createClass({
 
 FilePreview.canPreview = function(filename){
 	var ext = path.extname(filename);
-	return highlightExtentions.concat('.log', '.txt').indexOf(ext) !== -1;
+	return highlightExtentions.concat('.log', '.txt', '.md').indexOf(ext) !== -1;
 }
 
 module.exports = FilePreview;

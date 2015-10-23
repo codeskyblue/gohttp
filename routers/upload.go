@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"gopkg.in/macaron.v1"
@@ -20,9 +19,6 @@ func NewUploadHandler(rootDir string) func(req *http.Request, w http.ResponseWri
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		defer func() {
-			runtime.GC()
-		}()
 		if len(req.MultipartForm.File["file"]) == 0 {
 			http.Error(w, "Need multipart file", http.StatusInternalServerError)
 			return
