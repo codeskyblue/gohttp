@@ -106,6 +106,10 @@ func NewStaticHandler(root string) interface{} {
 				ctx.JSON(200, data)
 			}
 		} else {
+			if req.FormValue("preview") == "true" {
+				ctx.HTML(200, "preview", nil)
+				return
+			}
 			if req.FormValue("download") == "true" {
 				w.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(abspath))
 			}

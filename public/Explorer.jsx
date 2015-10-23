@@ -181,10 +181,9 @@ var Explorer = React.createClass({
             <FileList data={this.state.data} showHidden={this.state.hidden} onDirectoryChange={this.changePath} />
           </Table>
           { 
-            this.state.previewFile ? (
-              <Panel header={path.basename(this.state.previewFile)}>
+            this.state.previewFile ? 
                 <FilePreview fileName={this.state.previewFile} content={this.state.previewText} />
-              </Panel>) : null
+               : null
           }
         </Col>
       </Row>

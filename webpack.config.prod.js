@@ -2,9 +2,10 @@ var path = require('path');
 var baseConfig = require('./webpack.config.base');
 var config = Object.create(baseConfig);
 
-config.entry = [
-	"./public/entry.js"
-];
+config.entry = {
+	explorer: "./public/explorer.entry.js",
+	preview: "./public/preview.entry.js"
+}
 
 config.module.loaders.push(
 	{

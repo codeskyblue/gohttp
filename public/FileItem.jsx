@@ -6,7 +6,7 @@ var urljoin = require('url-join');
 
 var Icon = require('./Icon.jsx');
 var FileIcon = require('./FileIcon.jsx');
-
+var FilePreview = require('./FilePreview.jsx');
 
 var FileItem = React.createClass({
 	getInitialState: function(){
@@ -27,8 +27,9 @@ var FileItem = React.createClass({
 		var open = function(){
 			that.setState({show: true})
 		}
-		var link = urljoin(location.pathname, this.props.data.name);
 
+		var link = urljoin(location.pathname, this.props.data.name);
+		var fileLink = FilePreview.canPreview(this.props.data.name) ? link+'?preview=true' : link;
 		var ctrlButtons = [];
 		if (this.props.data.type == 'file'){
 			ctrlButtons.push(
@@ -54,7 +55,8 @@ var FileItem = React.createClass({
 					{fileIcon}
 				</td>
 				<td>
-					<a onClick={(e)=>this.props.onDirectoryChange(link, e)} href={link}>{this.props.data.name}</a>
+					<a onClick={(e)=>this.props.onDirectoryChange && this.props.onDirectoryChange(link, e)} 
+						href={fileLink}>{this.props.data.name}</a>
 				</td>
 				<td>{humanize.filesize(this.props.data.size)}</td>
 				<td>

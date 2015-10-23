@@ -63,7 +63,7 @@ func initRouters() {
 	}
 
 	m.Get("/-/:rand(.*).hot-update.:ext(.*)", ReloadProxy)
-	m.Get("/-/bundle.js", ReloadProxy)
+	m.Get("/-/:name(.*).bundle.js", ReloadProxy)
 }
 
 func main() {

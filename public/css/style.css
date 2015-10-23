@@ -39,3 +39,16 @@ div.dropzone-active {
 	border-style: solid;
 	background-color: #eee
 }
+
+pre {
+	border: 0px;
+	padding: 5px;
+	background-color: #f8f8f8;
+}
+
+div.panel-code-body .panel-body {
+	padding: 0px;
+	margin: 0px;
+	/*padding: 0px 10px;*/
+	background-color: #f8f8f8;
+}
