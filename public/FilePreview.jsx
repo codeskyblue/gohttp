@@ -4,6 +4,7 @@ var path = require('path');
 var Markdown = require('./Markdown.jsx');
 var {Panel} = require('react-bootstrap');
 var Highlight = require('react-highlight');
+var Icon = require('./Icon.jsx')
 
 
 var highlightExtentions = [
@@ -31,8 +32,6 @@ var FilePreview = React.createClass({
 		var contentNode = null;
 		switch(ext){
 		case "":
-			contentNode = <span>{this.props.content}</span>;
-			break;
 		case ".log":
 			contentNode = <pre>{this.props.content}</pre>;
 			break;
@@ -52,9 +51,13 @@ var FilePreview = React.createClass({
 			}
 			break;
 		}
+
+		var header = (
+			<span><Icon name="file-text-o"/> {path.basename(fileName)}</span>
+		);
 		
 		return (
-			<Panel className='panel-code-body' header={path.basename(fileName)}>
+			<Panel className='panel-code-body' header={header}>
 				{contentNode}
 			</Panel>
 		)

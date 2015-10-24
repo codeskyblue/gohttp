@@ -42,8 +42,12 @@ div.dropzone-active {
 
 pre {
 	border: 0px;
-	padding: 5px;
+	padding: 15px;
 	background-color: #f8f8f8;
+}
+
+pre>code.hljs {
+	padding: 0px;
 }
 
 div.panel-code-body .panel-body {
