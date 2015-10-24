@@ -4,7 +4,8 @@ var path = require('path');
 var Markdown = require('./Markdown.jsx');
 var {Panel} = require('react-bootstrap');
 var Highlight = require('react-highlight');
-var Icon = require('./Icon.jsx')
+var Icon = require('./Icon.jsx');
+var PreviewImage = require('./PreviewImage.jsx');
 
 
 var highlightExtentions = [
@@ -34,6 +35,9 @@ var FilePreview = React.createClass({
 		case "":
 		case ".log":
 			contentNode = <pre>{this.props.content}</pre>;
+			break;
+		case ".png":
+			contentNode = <PreviewImage fileName={this.props.fileName}/>
 			break;
 		case ".md":
 			contentNode = <Markdown text={this.props.content} style={{margin: '0px 15px'}}/>;
@@ -66,7 +70,7 @@ var FilePreview = React.createClass({
 
 FilePreview.canPreview = function(filename){
 	var ext = path.extname(filename);
-	return highlightExtentions.concat('.log', '.txt', '.md').indexOf(ext) !== -1;
+	return highlightExtentions.concat('.png', '.log', '.txt', '.md').indexOf(ext) !== -1;
 }
 
 module.exports = FilePreview;
