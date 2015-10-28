@@ -100,6 +100,7 @@ type plistBundle struct {
 	CFBundleIdentifier  string `plist:"CFBundleIdentifier"`
 	CFBundleVersion     string `plist:"CFBundleVersion"`
 	CFBundleDisplayName string `plist:"CFBundleDisplayName"`
+	CFBundleIconFile    string `plist:"CFBundleIconFile"`
 }
 
 func parseIPA(path string) (plinfo *plistBundle, err error) {
@@ -161,10 +162,14 @@ func generateDownloadPlist(ipaUrl, imgUrl string, plinfo *plistBundle) ([]byte, 
 	item.Assets = append(item.Assets, &plAsset{
 		Kind: "software-package",
 		URL:  ipaUrl,
-	}, &plAsset{
-		Kind: "display-image",
-		URL:  imgUrl,
 	})
+
+	// FIXME(ssx): find icon from CFBundleIconFile
+	_ = imgUrl
+	// , &plAsset{
+	// 	Kind: "display-image",
+	// 	URL:  imgUrl,
+	// })
 
 	item.Metadata.Kind = "software"
 
