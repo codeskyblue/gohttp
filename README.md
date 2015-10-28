@@ -27,7 +27,12 @@ Binary can be download from [gorelease](http://gorelease.herokuapp.com/codeskybl
 1. When only one dir under dir, path will combine two together
 1. Directory zip download
 1. Code preview
-1. Apple ipa auto generate .plist file, qrcode can be recognized by iphone
+1. Apple ipa auto generate .plist file, qrcode can be recognized by iphone (Require https)
+
+
+About **https**
+
+There is a [Chinese doc about how to set up nginx and generate self signed keys](docs/CA_NGINX.md)
 
 ## Build
 Suggest install node through [nvm](https://github.com/creationix/nvm)
