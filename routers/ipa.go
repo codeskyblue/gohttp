@@ -171,6 +171,9 @@ func generateDownloadPlist(ipaUrl, imgUrl string, plinfo *plistBundle) ([]byte, 
 	item.Metadata.BundleIdentifier = plinfo.CFBundleIdentifier
 	item.Metadata.BundleVersion = plinfo.CFBundleVersion
 	item.Metadata.Title = plinfo.CFBundleDisplayName
+	if item.Metadata.Title == "" {
+		item.Metadata.Title = filepath.Base(ipaUrl)
+	}
 
 	dp.Items = append(dp.Items, item)
 	data, err := goplist.MarshalIndent(dp, goplist.XMLFormat, "    ")
