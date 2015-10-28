@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/codeskyblue/file-server",
-	"GoVersion": "go1.4.2",
+	"GoVersion": "go1.5.1",
 	"Deps": [
 		{
 			"ImportPath": "code.google.com/p/rsc/gf256",
@@ -11,6 +11,10 @@
 			"ImportPath": "code.google.com/p/rsc/qr",
 			"Comment": "null-258",
 			"Rev": "2d8aa6027fab93979a3b4ecdbeb1ba430b489318"
+		},
+		{
+			"ImportPath": "github.com/DHowett/go-plist",
+			"Rev": "f4bf55d2395500aacc17eedcebc5f139336b4312"
 		},
 		{
 			"ImportPath": "github.com/Unknwon/com",
