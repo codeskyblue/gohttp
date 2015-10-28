@@ -28,5 +28,5 @@ _testmain.go
 .DS_Store
 
 node_modules/
-file-server
 bindata.go
+gohttp

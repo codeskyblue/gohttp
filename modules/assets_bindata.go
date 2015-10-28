@@ -3,8 +3,8 @@
 package modules
 
 import (
-	"github.com/codeskyblue/file-server/public"
-	"github.com/codeskyblue/file-server/templates"
+	"github.com/codeskyblue/gohttp/public"
+	"github.com/codeskyblue/gohttp/templates"
 	"github.com/go-macaron/bindata"
 	"gopkg.in/macaron.v1"
 )
