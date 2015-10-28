@@ -21,6 +21,8 @@ type Configure struct {
 	root     string
 	private  bool
 	httpauth string
+	cert     string
+	key      string
 }
 
 var gcfg = Configure{}
@@ -37,6 +39,8 @@ func init() {
 	flag.StringVar(&gcfg.root, "root", ".", "Watched root directory for filesystem events, also the HTTP File Server's root directory")
 	flag.BoolVar(&gcfg.private, "private", false, "Only listen on lookback interface, otherwise listen on all interface")
 	flag.StringVar(&gcfg.httpauth, "auth", "", "Basic Authentication (ex: username:password)")
+	flag.StringVar(&gcfg.cert, "cert", "", "TLS cert.pem")
+	flag.StringVar(&gcfg.key, "key", "", "TLS key.pem")
 }
 
 func initRouters() {
@@ -44,7 +48,9 @@ func initRouters() {
 	m.Get("/*", routers.NewStaticHandler(gcfg.root))
 	m.Post("/*", routers.NewUploadHandler(gcfg.root))
 	m.Get("/$zip/*", routers.NewZipDownloadHandler(gcfg.root))
-
+	m.Get("/$plist/*", routers.NewPlistHandler(gcfg.root))
+	m.Get("/$ipaicon/*", routers.NewIpaIconHandler(gcfg.root))
+	m.Get("/$ipa/*", routers.IPAHandler)
 	ReloadProxy := func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Debug, Hot reload", r.Host)
 		resp, err := http.Get("http://localhost:3000" + r.RequestURI)
@@ -72,16 +78,21 @@ func main() {
 
 	http.Handle("/", m)
 
-	int := ":" + strconv.Itoa(gcfg.port)
+	addr := ":" + strconv.Itoa(gcfg.port)
 	p := strconv.Itoa(gcfg.port)
 	mesg := "; please visit http://127.0.0.1:" + p
 	if gcfg.private {
-		int = "localhost" + int
+		addr = "localhost" + addr
 		log.Printf("listens on 127.0.0.1@" + p + mesg)
 	} else {
 		log.Printf("listens on 0.0.0.0@" + p + mesg)
 	}
-	if err := http.ListenAndServe(int, nil); err != nil {
-		log.Fatal(err)
+
+	var err error
+	if gcfg.key != "" && gcfg.cert != "" {
+		err = http.ListenAndServeTLS(addr, gcfg.cert, gcfg.key, nil)
+	} else {
+		err = http.ListenAndServe(addr, nil)
 	}
+	log.Fatal(err)
 }

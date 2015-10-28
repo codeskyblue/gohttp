@@ -3,6 +3,7 @@ var {ButtonToolbar, DropdownButton, Button,
 	MenuItem, Modal} = require('react-bootstrap');
 var humanize = require('humanize')
 var urljoin = require('url-join');
+var path = require('path')
 
 var Icon = require('./Icon.jsx');
 var FileIcon = require('./FileIcon.jsx');
@@ -26,6 +27,11 @@ var FileItem = React.createClass({
 		}
 		var open = function(){
 			that.setState({show: true})
+		}
+
+		var qrcodeLink = urljoin(location.href, this.props.data.name);
+		if (path.extname(this.props.data.name) == '.ipa'){
+			qrcodeLink = urljoin('https://'+location.host, '$ipa', location.pathname, this.props.data.name)
 		}
 
 		var link = urljoin(location.pathname, this.props.data.name);
@@ -71,10 +77,12 @@ var FileItem = React.createClass({
 							onHide={close}
 						>
 							<Modal.Header closeButton>
-			            		<Modal.Title className="text-center">{this.props.data.name}</Modal.Title>
+			            		<Modal.Title className="text-center">
+			            			<a href={qrcodeLink}>{this.props.data.name}</a>
+			            		</Modal.Title>
 			            		<Modal.Body>
 			            			<div className="text-center">
-			            				<img alt='qrcode' src={'/$qrcode?text='+encodeURI(urljoin(location.href, this.props.data.name))} />
+			            				<img alt='qrcode' src={'/$qrcode?text='+encodeURI(qrcodeLink)} />
 			            			</div>
 			            		</Modal.Body>
 			            		<Modal.Footer>

@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>Ipa install</title>
+<meta http-equiv="Content-Type" content="text/HTML; charset=utf-8">
+<meta content="target-densitydpi=device-dpi,width=640" name="viewport" id="viewport">
+<script type="text/javascript" src="/-/js/ua-parser.min.js"></script>
+<script type="text/javascript">
+
+function checkBrowerAndDownload() {
+    var parser = new UAParser();
+    var os_info = parser.getOS();
+    console.log(os_info)
+    if (navigator.userAgent.toLowerCase().match(/MicroMessenger/i) == "micromessenger") {
+        document.getElementById('show_wx_img').innerHTML = "<img style='width: 100%;position: relative;' src='/-/wx.png' />";
+        return;
+    }
+
+    var plistLink = 'https://'+location.host+
+        location.pathname
+            .replace(/\$ipa/, '$plist') // prefix
+            .replace(/\.ipa$/, '.plist') // extention
+    var ipaInstallLink = 'itms-services://?action=download-manifest&url='+plistLink;
+
+    if (os_info.name == 'Android') {
+        return ;
+    }
+    else if (os_info.name == 'iOS') {
+        location.href = ipaInstallLink;
+        return;
+    }
+    else {
+        window.onload = function(){
+            document.writeln(
+                '<h2>Page for Desktop Browser</h2>'+
+                '<div><a href="'+plistLink+'">'+plistLink+'</a></div>' + 
+                '<pre>'+ipaInstallLink+'</pre>' +
+                '<img src="/$qrcode?text='+encodeURI(location.href)+'"/>');
+        }
+        return;
+    }
+}
+</script>
+</head>
+<body>
+<style>
+#show_wx_img {
+    position: relative;
+    width: 640px;
+    margin: 0 auto;
+    background: #fff;
+    overflow: hidden;
+    min-height: 777px;
+}
+</style>
+<div id="show_wx_img"></div>
+<div id="content"></div>
+<script type="text/javascript">
+    checkBrowerAndDownload();
+</script>
+</body>
+</html>
