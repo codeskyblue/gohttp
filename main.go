@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/codeskyblue/file-server/modules"
-	"github.com/codeskyblue/file-server/routers"
+	"github.com/codeskyblue/gohttp/modules"
+	"github.com/codeskyblue/gohttp/routers"
 	"github.com/go-macaron/auth"
 	"github.com/go-macaron/gzip"
 	"gopkg.in/macaron.v1"

@@ -1,12 +1,12 @@
-# File Static Server
+# gohttp
 A http file server written by golang and reactjs.
 
-Binary can be download from [gorelease](http://gorelease.herokuapp.com/codeskyblue/file-server)
+Binary can be download from [gorelease](http://gorelease.herokuapp.com/codeskyblue/gohttp)
 
 ## Usage
-	file-server -port 8000 -root /your/workdir
+	gohttp -port 8000 -root /your/workdir
 
-	file-server
+	gohttp
 		-port=8000: Which port to listen
 		-private=false: Only listen on lookback interface, otherwise listen on all interface
 		-root=".": the HTTP File Server's root directory
@@ -51,7 +51,7 @@ In develop mode, Support react hot reload
 
 Open another terminal
 
-	go build && ./file-server
+	go build && ./gohttp
 
 ### API
 Upload
