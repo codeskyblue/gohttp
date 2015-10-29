@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"io"
 	"log"
 	"net/http"
@@ -9,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/alecthomas/kingpin"
 	"github.com/codeskyblue/gohttp/modules"
 	"github.com/codeskyblue/gohttp/routers"
 	"github.com/go-macaron/auth"
@@ -35,12 +35,19 @@ func init() {
 	m.Use(modules.Renderer)
 	m.Use(gzip.Gziper())
 
-	flag.IntVar(&gcfg.port, "port", 8000, "Which port to listen")
-	flag.StringVar(&gcfg.root, "root", ".", "Watched root directory for filesystem events, also the HTTP File Server's root directory")
-	flag.BoolVar(&gcfg.private, "private", false, "Only listen on lookback interface, otherwise listen on all interface")
-	flag.StringVar(&gcfg.httpauth, "auth", "", "Basic Authentication (ex: username:password)")
-	flag.StringVar(&gcfg.cert, "cert", "", "TLS cert.pem")
-	flag.StringVar(&gcfg.key, "key", "", "TLS key.pem")
+	kingpin.HelpFlag.Short('h')
+	kingpin.Flag("port", "Port to listen").Default("8000").IntVar(&gcfg.port)
+	kingpin.Flag("root", "File root directory").Default(".").StringVar(&gcfg.root)
+	kingpin.Flag("private", "Only listen on loopback address").BoolVar(&gcfg.private)
+	kingpin.Flag("httpauth", "HTTP basic auth (ex: user:pass)").Default("").StringVar(&gcfg.httpauth)
+	kingpin.Flag("cert", "TLS cert.pem").StringVar(&gcfg.cert)
+	kingpin.Flag("key", "TLS key.pem").StringVar(&gcfg.key)
+	//flag.IntVar(&gcfg.port, "port", 8000, "Which port to listen")
+	//flag.StringVar(&gcfg.root, "root", ".", "Watched root directory for filesystem events, also the HTTP File Server's root directory")
+	//flag.BoolVar(&gcfg.private, "private", false, "Only listen on lookback interface, otherwise listen on all interface")
+	//flag.StringVar(&gcfg.httpauth, "auth", "", "Basic Authentication (ex: username:password)")
+	//flag.StringVar(&gcfg.cert, "cert", "", "TLS cert.pem")
+	//flag.StringVar(&gcfg.key, "key", "", "TLS key.pem")
 }
 
 func initRouters() {
@@ -73,7 +80,7 @@ func initRouters() {
 }
 
 func main() {
-	flag.Parse()
+	kingpin.Parse()
 	initRouters()
 
 	http.Handle("/", m)

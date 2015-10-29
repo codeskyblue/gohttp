@@ -4,13 +4,22 @@ A http file server written by golang and reactjs.
 Binary can be download from [gorelease](http://gorelease.herokuapp.com/codeskyblue/gohttp)
 
 ## Usage
-	gohttp -port 8000 -root /your/workdir
+```
+# basic usage
+gohttp --port 8000 --root /your/workdir
 
-	gohttp
-		-port=8000: Which port to listen
-		-private=false: Only listen on lookback interface, otherwise listen on all interface
-		-root=".": the HTTP File Server's root directory
-		-auth="": Basic Authentication (ex: username:password)
+Usage: gohttp [<flags>]
+
+Flags:
+  -h, --help               Show context-sensitive help (also try --help-long and --help-man).
+      --port=8000          Port to listen
+      --root="."           File root directory
+      --private            Only listen on loopback address
+      --httpauth=HTTPAUTH  HTTP basic auth (ex: user:pass)
+      --cert=CERT          TLS cert.pem
+      --key=KEY            TLS key.pem
+```
+
 
 ![screenshot](images/screenshot1.png)
 ![screenshot](images/screenshot2.png)
@@ -57,6 +66,8 @@ Open another terminal
 Upload
 
 `POST /upload-dir`
+
+*upload-dir* is just a name which you can change it easily.
 
 Field name | Description | Example
 -----------|-------------|--------
