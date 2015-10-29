@@ -1,0 +1,67 @@
+package modules
+
+import (
+	"io"
+	"os"
+	"path/filepath"
+)
+
+type Driver interface {
+	ListDir(string) ([]os.FileInfo, error)
+	Stat(string) (os.FileInfo, error)
+	GetFile(string) (io.ReadCloser, error)
+	PutFile(string, io.Reader) error
+	IsDir(string) bool
+}
+
+type PosixFSDriver struct {
+	RootDir string
+	Driver
+}
+
+const GOHTTPCFG = ".gohttp.yml"
+
+type HtConfig struct {
+	Mount struct {
+		Type   string
+		Config map[string]string
+	}
+}
+
+func readHtConfig(rd io.Reader) *HtConfig {
+	return &HtConfig{}
+}
+
+func (p *PosixFSDriver) ListDir(path string) (fis []os.FileInfo, err error) {
+	names := filepath.SplitList(path)
+	stack := []string{}
+	for idx, name := range names {
+		stack = append(stack, name)
+		tmppath := filepath.Join(stack...)
+		if !p.IsDir(tmppath) {
+			continue
+		}
+		cfgpath := filepath.Join(tmppath, GOHTTPCFG)
+		_, err := p.Stat(cfgpath)
+		if err != nil {
+			continue
+		}
+		// check mount
+		rd, err := p.GetFile(cfgpath)
+		if err != nil {
+			continue
+		}
+		defer rd.Close()
+
+		hcfg := readHtConfig(rd)
+		if hcfg.Mount.Type != "" {
+			q := &QiniuDriver{}
+			return q.ListDir(filepath.Join(names[idx+1:]))
+		}
+	}
+}
+
+type QiniuDriver struct {
+	RootDir string
+	Driver
+}
