@@ -1,0 +1,7 @@
+---
+mount:
+    type: qiniu
+    config:
+        access_key: asksjdfasdfasd
+        secret_key: lksajdfkjasdfk
+        bucket: gobuild3-test
