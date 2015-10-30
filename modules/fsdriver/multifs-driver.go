@@ -60,6 +60,7 @@ func (p *MultiFSDriver) ListDir(path string) (fis []os.FileInfo, err error) {
 	return dr.ListDir(rel)
 }
 
+// Rename folder multi driver is not supported
 func (p *MultiFSDriver) Rename(oldpath string, newpath string) error {
 	oldpath = filepath.Clean(oldpath)
 	newpath = filepath.Clean(newpath)
@@ -71,6 +72,8 @@ func (p *MultiFSDriver) Rename(oldpath string, newpath string) error {
 	if err == nil {
 		return oldDriver.Rename(oldpath, newpath)
 	} else {
+		// oldDriver.Stat(oldRel)
+		// FIXME(ssx): Check if oldRel isDir then return Error
 		newRel, newDriver := p.getDriver(newpath)
 		_, rc, err := oldDriver.GetFile(oldRel, 0)
 		if err != nil {
@@ -79,6 +82,9 @@ func (p *MultiFSDriver) Rename(oldpath string, newpath string) error {
 		defer rc.Close()
 
 		_, err = newDriver.PutFile(newRel, rc, false)
+		if err == nil {
+			oldDriver.DeleteFile(oldRel)
+		}
 		return err
 	}
 }
@@ -157,8 +163,10 @@ func (mdr *MultiFSDriver) getDriver(path string) (rel string, driver FSDriver) {
 			continue
 		}
 		if hcfg.Mount.Type != "" {
-			return "/" + filepath.Join(names[idx:]...), makeDriver(hcfg.Mount)
+			log.Debug(hcfg.Mount.Type, "/"+filepath.Join(names[idx+1:]...))
+			return "/" + filepath.Join(names[idx+1:]...), makeDriver(hcfg.Mount)
 		}
 	}
+
 	return path, p
 }

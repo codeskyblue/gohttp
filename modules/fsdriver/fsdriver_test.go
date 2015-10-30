@@ -120,7 +120,62 @@ func TestQiniuFSDriver(t *testing.T) {
 	FSDriverTest(dr, t)
 }
 
+var gohttpyml = []byte(os.ExpandEnv(`---
+mount:
+  type: qiniu
+  config:
+    access_key: $QNAK
+    secret_key: $QNSK
+    bucket: gobuild3-test
+`))
+
 func TestMultiFSDriver(t *testing.T) {
-	var dr FSDriver = &MultiFSDriver{&PosixFSDriver{"./"}}
-	FSDriverTest(dr, t)
+	os.RemoveAll("mtmp")
+	err := os.MkdirAll("mtmp/qtmp", 0755)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = ioutil.WriteFile("mtmp/qtmp/.gohttp.yml", gohttpyml, 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fsdr := &PosixFSDriver{"./"}
+	var mldr FSDriver = &MultiFSDriver{fsdr}
+	FSDriverTest(mldr, t)
+
+	mldr = &MultiFSDriver{&PosixFSDriver{"./mtmp"}}
+	wcnt, err := mldr.PutFile("qtmp/a.txt", bytes.NewBufferString("AB"), false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if wcnt != 2 {
+		t.Fatalf("Expect write count 2, but got %v", wcnt)
+	}
+
+	// assert: should in qiniu, not in local
+	_, err = fsdr.Stat("mtmp/qtmp/a.txt")
+	if err == nil {
+		t.Fatalf("Expect file in qiniu, not in local file system")
+	}
+
+	// Rename qiniu to local
+	err = mldr.Rename("/qtmp/a.txt", "a.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = mldr.Stat("/qtmp/a.txt")
+	if err == nil {
+		t.Fatalf("Should not exists file: /qtmp/a.txt")
+	}
+
+	_, rc, err := fsdr.GetFile("mtmp/a.txt", 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rc.Close()
+	data, _ := ioutil.ReadAll(rc)
+	if string(data) != "AB" {
+		t.Fatalf("Expect a.txt content is AB, but got %v", string(data))
+	}
 }
