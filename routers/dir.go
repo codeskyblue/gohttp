@@ -1,12 +1,10 @@
 package routers
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 
 	"gopkg.in/macaron.v1"
 )

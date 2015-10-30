@@ -13,6 +13,8 @@ import (
 	"github.com/codeskyblue/gohttp/routers"
 	"github.com/go-macaron/auth"
 	"github.com/go-macaron/gzip"
+	"github.com/goftp/posixfs-driver"
+	goftp "github.com/goftp/server"
 	"gopkg.in/macaron.v1"
 )
 
@@ -23,6 +25,9 @@ type Configure struct {
 	httpauth string
 	cert     string
 	key      string
+	ftp      bool
+	ftpPort  int
+	ftpAuth  string
 }
 
 var gcfg = Configure{}
@@ -42,12 +47,9 @@ func init() {
 	kingpin.Flag("httpauth", "HTTP basic auth (ex: user:pass)").Default("").StringVar(&gcfg.httpauth)
 	kingpin.Flag("cert", "TLS cert.pem").StringVar(&gcfg.cert)
 	kingpin.Flag("key", "TLS key.pem").StringVar(&gcfg.key)
-	//flag.IntVar(&gcfg.port, "port", 8000, "Which port to listen")
-	//flag.StringVar(&gcfg.root, "root", ".", "Watched root directory for filesystem events, also the HTTP File Server's root directory")
-	//flag.BoolVar(&gcfg.private, "private", false, "Only listen on lookback interface, otherwise listen on all interface")
-	//flag.StringVar(&gcfg.httpauth, "auth", "", "Basic Authentication (ex: username:password)")
-	//flag.StringVar(&gcfg.cert, "cert", "", "TLS cert.pem")
-	//flag.StringVar(&gcfg.key, "key", "", "TLS key.pem")
+	kingpin.Flag("ftp", "Enable FTP support").BoolVar(&gcfg.ftp)
+	kingpin.Flag("ftp-port", "FTP listen port").Default("2121").IntVar(&gcfg.ftpPort)
+	kingpin.Flag("ftp-auth", "FTP auth (ex: user:pass)").Default("admin:123456").StringVar(&gcfg.ftpAuth)
 }
 
 func initRouters() {
@@ -79,6 +81,16 @@ func initRouters() {
 	m.Get("/-/:name(.*).bundle.js", ReloadProxy)
 }
 
+type FTPAuth struct {
+	Username string
+	Password string
+}
+
+func (this *FTPAuth) CheckPasswd(user, pass string) (bool, error) {
+	ok := (this.Username == user && this.Password == pass)
+	return ok, nil
+}
+
 func main() {
 	kingpin.Parse()
 	initRouters()
@@ -93,6 +105,21 @@ func main() {
 		log.Printf("listens on 127.0.0.1@" + p + mesg)
 	} else {
 		log.Printf("listens on 0.0.0.0@" + p + mesg)
+	}
+
+	if gcfg.ftp {
+		//log.Println("Enable FTP")
+		auths := strings.SplitN(gcfg.ftpAuth, ":", 2)
+		if len(auths) != 2 {
+			log.Fatal("ftp auth format error")
+		}
+		auth := FTPAuth{auths[0], auths[1]}
+		ftpserv := goftp.NewServer(&goftp.ServerOpts{
+			Port:    gcfg.ftpPort,
+			Factory: posixfs.NewPosixFSFactory(gcfg.root),
+			Auth:    &auth,
+		})
+		go ftpserv.ListenAndServe()
 	}
 
 	var err error

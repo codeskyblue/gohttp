@@ -11,13 +11,17 @@ gohttp --port 8000 --root /your/workdir
 Usage: gohttp [<flags>]
 
 Flags:
-  -h, --help               Show context-sensitive help (also try --help-long and --help-man).
-      --port=8000          Port to listen
-      --root="."           File root directory
-      --private            Only listen on loopback address
-      --httpauth=HTTPAUTH  HTTP basic auth (ex: user:pass)
-      --cert=CERT          TLS cert.pem
-      --key=KEY            TLS key.pem
+  -h, --help                     Show context-sensitive help (also try
+                                 --help-long and --help-man).
+      --port=8000                Port to listen
+      --root="."                 File root directory
+      --private                  Only listen on loopback address
+      --httpauth=HTTPAUTH        HTTP basic auth (ex: user:pass)
+      --cert=CERT                TLS cert.pem
+      --key=KEY                  TLS key.pem
+      --ftp                      Enable FTP support
+      --ftp-port=2121            FTP listen port
+      --ftp-auth="admin:123456"  FTP auth (ex: user:pass)
 ```
 
 
@@ -37,6 +41,11 @@ Flags:
 1. Directory zip download
 1. Code preview
 1. Apple ipa auto generate .plist file, qrcode can be recognized by iphone (Require https)
+1. Add ftp support(beta)
+
+**Troubles**
+
+* ipv6 not supported by goftp
 
 
 About **https**
