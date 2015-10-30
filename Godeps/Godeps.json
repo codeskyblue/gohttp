@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/codeskyblue/gohttp",
-	"GoVersion": "go1.5.1",
+	"GoVersion": "go1.4.2",
 	"Deps": [
 		{
 			"ImportPath": "code.google.com/p/rsc/gf256",
@@ -44,6 +44,18 @@
 		{
 			"ImportPath": "github.com/go-macaron/inject",
 			"Rev": "c5ab7bf3a307593cd44cb272d1a5beea473dd072"
+		},
+		{
+			"ImportPath": "github.com/goftp/posixfs-driver",
+			"Rev": "190be88754cf3a75dfdd6bd66903efc7148ef382"
+		},
+		{
+			"ImportPath": "github.com/goftp/server",
+			"Rev": "0fa0e4c0d616c24fb7ff3122effa88b7e46817ef"
+		},
+		{
+			"ImportPath": "github.com/jehiah/go-strftime",
+			"Rev": "2555f398a2e2a737c812553ca88190823b7d22f8"
 		},
 		{
 			"ImportPath": "github.com/klauspost/compress/flate",
