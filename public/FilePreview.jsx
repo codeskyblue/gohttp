@@ -2,7 +2,7 @@ var React = require('react');
 var request = require('superagent')
 var path = require('path');
 var Markdown = require('./Markdown.jsx');
-var {Panel} = require('react-bootstrap');
+var {Button, Panel} = require('react-bootstrap');
 var Highlight = require('react-highlight');
 var Icon = require('./Icon.jsx');
 var PreviewImage = require('./PreviewImage.jsx');
@@ -57,7 +57,12 @@ var FilePreview = React.createClass({
 		}
 
 		var header = (
-			<span><Icon name="file-text-o"/> {path.basename(fileName)}</span>
+			<span>
+				<span><Icon name="file-text-o"/> {path.basename(fileName)}</span>
+				<Button bsSize="xsmall" 
+					href={fileName}
+					className="pull-right">Raw</Button>
+			</span>
 		);
 		
 		return (
