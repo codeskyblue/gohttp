@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/codeskyblue/gohttp",
-	"GoVersion": "go1.4.2",
+	"GoVersion": "go1.5.1",
 	"Deps": [
 		{
 			"ImportPath": "code.google.com/p/rsc/gf256",
@@ -31,7 +31,7 @@
 		},
 		{
 			"ImportPath": "github.com/alecthomas/units",
-			"Rev": "6b4e7dc5e3143b85ea77909c72caf89416fc2915"
+			"Rev": "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a"
 		},
 		{
 			"ImportPath": "github.com/go-macaron/auth",
@@ -51,7 +51,7 @@
 		},
 		{
 			"ImportPath": "github.com/goftp/server",
-			"Rev": "0fa0e4c0d616c24fb7ff3122effa88b7e46817ef"
+			"Rev": "d2083512c43feb1d24d9605e30da53f61716ca81"
 		},
 		{
 			"ImportPath": "github.com/jehiah/go-strftime",

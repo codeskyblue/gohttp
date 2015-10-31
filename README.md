@@ -43,11 +43,6 @@ Flags:
 1. Apple ipa auto generate .plist file, qrcode can be recognized by iphone (Require https)
 1. Add ftp support(beta)
 
-**Troubles**
-
-* ipv6 not supported by goftp
-
-
 About **https**
 
 There is a [Chinese doc about how to set up nginx and generate self signed keys](docs/CA_NGINX.md)
