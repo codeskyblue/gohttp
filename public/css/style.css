@@ -3,13 +3,14 @@
 	cursor: pointer;
 }
 
+table.table {
+	font-family: "Courier New"
+}
+
 .table-name {
 	width: 35%;
 }
 
-table.table {
-	font-family: "Courier New"
-}
 
 table {
 	border: 1px solid;
@@ -55,4 +56,8 @@ div.panel-code-body .panel-body {
 	margin: 0px;
 	/*padding: 0px 10px;*/
 	background-color: #f8f8f8;
+}
+
+img {
+	width: 100%;
 }

@@ -6,10 +6,7 @@ var Explorer = require('./Explorer.jsx')
 var Content = React.createClass({
 	render: function(){
 		return (
-			<div>
-				<h3>Simple HTTP File Server</h3>
-				<Explorer/>
-			</div>
+			<Explorer/>
 		)
 	}
 })

@@ -57,15 +57,14 @@ var FileItem = React.createClass({
 		}
 		return (
 			<tr>
-				<td className="text-center">
+				<td className="hidden-xs text-center">
 					{fileIcon}
 				</td>
 				<td>
 					<a onClick={(e)=>this.props.onDirectoryChange && this.props.onDirectoryChange(link, e)} 
 						href={fileLink}>{this.props.data.name}</a>
 				</td>
-				<td>{humanize.filesize(this.props.data.size)}</td>
-				<td>
+				<td className="hidden-xs">
 					<div>
 						<ButtonToolbar>
 							{ctrlButtons}
@@ -92,7 +91,8 @@ var FileItem = React.createClass({
 						</Modal>
 					</div>
 				</td>
-				<td>
+				<td className="hidden-xs">{humanize.filesize(this.props.data.size)}</td>
+				<td className="hidden-xs">
 					{humanize.date('Y-m-d H:i:s', this.props.data.mtime)}
 				</td>
 			</tr>

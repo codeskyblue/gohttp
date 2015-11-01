@@ -135,7 +135,7 @@ var Explorer = React.createClass({
           <PathBreadcrumb data={this.state.pathname} onClick={this.changePath} />
         </Col>
         <Col md={12}>
-          <Table striped bordered condensed hover>
+          <Table striped condensed bordered hover>
             <thead>
               <tr>
                 <td colSpan={5}>
@@ -168,13 +168,13 @@ var Explorer = React.createClass({
                 </td>
               </tr>
               <tr>
-                <th style={{textAlign: 'center'}}>
+                <th className="hidden-xs" style={{textAlign: 'center'}}>
                   #
                 </th>
                 <th className="table-name">Name</th>
-                <th>Size</th>
-                <th>Control</th>
-                <th>Modity Time</th>
+                <th className="hidden-xs">Action</th>
+                <th className="hidden-xs">Size</th>
+                <th className="hidden-xs">Modity Time</th>
               </tr>
             </thead>
               
