@@ -4,7 +4,6 @@ os: darwin linux windows
 includes:
   - README.md
   - LICENSE
-  - data
 excludes:
   - \.git
 script:
