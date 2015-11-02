@@ -25,6 +25,7 @@ type Configure struct {
 	httpauth string
 	cert     string
 	key      string
+	gzip     bool
 	ftp      bool
 	ftpPort  int
 	ftpAuth  string
@@ -38,7 +39,6 @@ func init() {
 	m = macaron.Classic()
 	m.Use(modules.Public)
 	m.Use(modules.Renderer)
-	m.Use(gzip.Gziper())
 
 	kingpin.HelpFlag.Short('h')
 	kingpin.Flag("port", "Port to listen").Default("8000").IntVar(&gcfg.port)
@@ -47,6 +47,7 @@ func init() {
 	kingpin.Flag("httpauth", "HTTP basic auth (ex: user:pass)").Default("").StringVar(&gcfg.httpauth)
 	kingpin.Flag("cert", "TLS cert.pem").StringVar(&gcfg.cert)
 	kingpin.Flag("key", "TLS key.pem").StringVar(&gcfg.key)
+	kingpin.Flag("gzip", "Enable Gzip support").BoolVar(&gcfg.gzip)
 	kingpin.Flag("ftp", "Enable FTP support").BoolVar(&gcfg.ftp)
 	kingpin.Flag("ftp-port", "FTP listen port").Default("2121").IntVar(&gcfg.ftpPort)
 	kingpin.Flag("ftp-auth", "FTP auth (ex: user:pass)").Default("admin:123456").StringVar(&gcfg.ftpAuth)
@@ -76,7 +77,9 @@ func initRouters() {
 		user, pass := userpass[0], userpass[1]
 		m.Use(auth.Basic(user, pass))
 	}
-
+	if gcfg.gzip {
+		m.Use(gzip.Gziper())
+	}
 	m.Get("/-/:rand(.*).hot-update.:ext(.*)", ReloadProxy)
 	m.Get("/-/:name(.*).bundle.js", ReloadProxy)
 }
