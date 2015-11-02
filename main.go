@@ -99,12 +99,12 @@ func main() {
 
 	addr := ":" + strconv.Itoa(gcfg.port)
 	p := strconv.Itoa(gcfg.port)
-	mesg := "; please visit http://127.0.0.1:" + p
+	//mesg := "; please visit http://127.0.0.1:" + p
 	if gcfg.private {
 		addr = "localhost" + addr
-		log.Printf("listens on 127.0.0.1@" + p + mesg)
+		log.Printf("listens on 127.0.0.1@" + p) // + mesg)
 	} else {
-		log.Printf("listens on 0.0.0.0@" + p + mesg)
+		log.Printf("listens on 0.0.0.0@" + p) // + mesg)
 	}
 
 	if gcfg.ftp {

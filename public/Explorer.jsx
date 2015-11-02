@@ -33,6 +33,9 @@ var FileList = React.createClass({
     })
     var fileItems = filterData.map(function(item){
       if (item.type == 'directory'){
+        if (item.name.substr(-1) != '/'){
+            item.name += '/';
+        }
         return (
           <FileItem key={item.name} data={item} onDirectoryChange={that.props.onDirectoryChange} />
         )
@@ -143,12 +146,12 @@ var Explorer = React.createClass({
                     <Button bsSize="xsmall" 
                       href={path.dirname(this.state.pathname)}
                       onClick={(event)=>this.changePath(path.dirname(this.state.pathname), event)}>
-                      Up <Icon name="arrow-up"/>
+                      Back <Icon name="arrow-left"/>
                     </Button>
                     <Button bsSize="xsmall"　onClick={
                       ()=>this.setState({hidden: !this.state.hidden})
                     }>
-                      Show Hidden　{
+                      Hidden　{
                         this.state.hidden ? <i className="fa fa-eye"/> : <i className="fa fa-eye-slash"/>
                       }
                     </Button>
@@ -182,7 +185,7 @@ var Explorer = React.createClass({
           </Table>
           { 
             this.state.previewFile ? 
-                <FilePreview fileName={this.state.previewFile} content={this.state.previewText} />
+                <FilePreview style={{textOverflow:'ellipsis'}} fileName={this.state.previewFile} content={this.state.previewText} />
                : null
           }
         </Col>

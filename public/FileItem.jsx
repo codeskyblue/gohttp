@@ -29,13 +29,22 @@ var FileItem = React.createClass({
 			that.setState({show: true})
 		}
 
+		var extname = path.extname(this.props.data.name);
+
+		var link = urljoin(location.pathname, this.props.data.name);
+        var fileLink = link;
 		var qrcodeLink = urljoin(location.href, this.props.data.name);
+
+        if (FilePreview.canPreview(this.props.data.name)){
+            fileLink = fileLink+'?preview=true';
+        } else if (extname == '.ipa'){
+            fileLink = urljoin('/$ipa', location.pathname, this.props.data.name);
+        }
+
 		if (path.extname(this.props.data.name) == '.ipa'){
 			qrcodeLink = urljoin('https://'+location.host, '$ipa', location.pathname, this.props.data.name)
 		}
 
-		var link = urljoin(location.pathname, this.props.data.name);
-		var fileLink = FilePreview.canPreview(this.props.data.name) ? link+'?preview=true' : link;
 		var ctrlButtons = [];
 		if (this.props.data.type == 'file'){
 			ctrlButtons.push(
