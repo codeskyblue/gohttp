@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "font-awesome": "^4.4.0",
+    "highlight.js": "^8.9.1",
     "humanize": "0.0.9",
     "jquery": "^2.1.4",
     "markdown": "^0.5.0",
