@@ -4,8 +4,10 @@ os: darwin linux windows
 includes:
   - README.md
   - LICENSE
+  - templates
 excludes:
   - \.git
+  - bindata.go
 script:
   - go get -v
   - make binary

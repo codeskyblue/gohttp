@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 
 	"strconv"
 	"strings"
@@ -17,6 +18,8 @@ import (
 	goftp "github.com/goftp/server"
 	"gopkg.in/macaron.v1"
 )
+
+const VERSION = "0.1.1"
 
 type Configure struct {
 	port     int
@@ -38,9 +41,15 @@ var m *macaron.Macaron
 func init() {
 	m = macaron.Classic()
 	m.Use(modules.Public)
-	m.Use(modules.Renderer)
+
+	if _, err := os.Stat("templates"); err == nil {
+		m.Use(macaron.Renderer())
+	} else {
+		m.Use(modules.Renderer)
+	}
 
 	kingpin.HelpFlag.Short('h')
+	kingpin.Version(VERSION)
 	kingpin.Flag("port", "Port to listen").Default("8000").IntVar(&gcfg.port)
 	kingpin.Flag("root", "File root directory").Default(".").StringVar(&gcfg.root)
 	kingpin.Flag("private", "Only listen on loopback address").BoolVar(&gcfg.private)
