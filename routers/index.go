@@ -11,7 +11,9 @@ import (
 
 func deepPath(basedir, name string) string {
 	isDir := true
-	for isDir {
+	// loop max 5, incase of for loop not finished
+	maxDepth := 5
+	for depth := 0; depth <= maxDepth && isDir; depth += 1 {
 		finfos, err := ioutil.ReadDir(filepath.Join(basedir, name))
 		if err != nil || len(finfos) != 1 {
 			return name
@@ -77,7 +79,7 @@ func NewStaticHandler(root string) interface{} {
 		if finfo.IsDir() {
 			switch format {
 			case "html":
-				ctx.HTML(200, "dirlist", nil)
+				ctx.HTML(200, "index", nil)
 				return
 			case "json":
 				data, err := listDirectory(abspath)

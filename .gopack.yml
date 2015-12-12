@@ -4,8 +4,10 @@ os: darwin linux windows
 includes:
   - README.md
   - LICENSE
+  - templates
 excludes:
   - \.git
+  - bindata.go
 prepare:
   - go get github.com/jteeuwen/go-bindata/...
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash

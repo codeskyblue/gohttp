@@ -42,10 +42,13 @@ Flags:
 1. Code preview
 1. Apple ipa auto generate .plist file, qrcode can be recognized by iphone (Require https)
 1. Add ftp support(beta)
+1. Support modify the index page
 
 About **https**
 
 There is a [Chinese doc about how to set up nginx and generate self signed keys](docs/CA_NGINX.md)
+
+If there is a directory `templates` exists. The program will use templates under this dir instead use html resource inside the binary file.
 
 ## Build
 Suggest install node through [nvm](https://github.com/creationix/nvm)
