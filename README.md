@@ -24,6 +24,9 @@ Flags:
       --ftp-auth="admin:123456"  FTP auth (ex: user:pass)
 ```
 
+## Warning
+ftp feature has a serious memory link problem. Be careful with that.
+
 
 ![screenshot](images/screenshot1.png)
 ![screenshot](images/screenshot2.png)

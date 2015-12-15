@@ -37,11 +37,11 @@ var FileList = React.createClass({
             item.name += '/';
         }
         return (
-          <FileItem key={item.name} data={item} onDirectoryChange={that.props.onDirectoryChange} />
+          <FileItem key={item.name} data={item} isDir={true} onDirectoryChange={that.props.onDirectoryChange} />
         )
       } else {
         return (
-          <FileItem key={item.name} data={item} />
+          <FileItem key={item.name} data={item} isDir={false} />
         )
       }
     })
@@ -141,7 +141,7 @@ var Explorer = React.createClass({
           <Table striped condensed bordered hover>
             <thead>
               <tr>
-                <td colSpan={5}>
+                <td colSpan={6}>
                   <ButtonToolbar>
                     <Button bsSize="xsmall" 
                       href={path.dirname(this.state.pathname)}
@@ -178,6 +178,7 @@ var Explorer = React.createClass({
                 <th className="hidden-xs">Action</th>
                 <th className="hidden-xs">Size</th>
                 <th className="hidden-xs">Modity Time</th>
+                <th className="hidden-xs">Download</th>
               </tr>
             </thead>
               

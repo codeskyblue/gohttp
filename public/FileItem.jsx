@@ -66,6 +66,7 @@ var FileItem = React.createClass({
 		}
 		return (
 			<tr>
+                {/* Icon */}
 				<td className="hidden-xs text-center">
 					{fileIcon}
 				</td>
@@ -73,6 +74,7 @@ var FileItem = React.createClass({
 					<a onClick={(e)=>this.props.onDirectoryChange && this.props.onDirectoryChange(link, e)} 
 						href={fileLink}>{this.props.data.name}</a>
 				</td>
+                {/* Action */}
 				<td className="hidden-xs">
 					<div>
 						<ButtonToolbar>
@@ -100,10 +102,16 @@ var FileItem = React.createClass({
 						</Modal>
 					</div>
 				</td>
-				<td className="hidden-xs">{humanize.filesize(this.props.data.size)}</td>
+				<td className="hidden-xs">
+                    {this.props.isDir ? "-" : humanize.filesize(this.props.data.size)}
+                </td>
+                {/* Modify Time */}
 				<td className="hidden-xs">
 					{humanize.date('Y-m-d H:i:s', this.props.data.mtime)}
 				</td>
+                <td className="hidden-xs">
+                    {this.props.isDir ? "-" : this.props.data.download}
+                </td>
 			</tr>
 		)
 	}
