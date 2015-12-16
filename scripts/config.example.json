@@ -1,0 +1,12 @@
+{
+    "acls": [
+        {
+            "directory": "/tmp",
+            "password": "123456",
+            "username": "hzsunshx"
+        }
+    ],
+	"anonymous": true,
+    "banner": "pyftpdlib based ftpd is ready",
+    "port": 7021
+}
