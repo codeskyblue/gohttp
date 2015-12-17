@@ -7,23 +7,31 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"gopkg.in/macaron.v1"
 )
 
 // record download count
-var downloadMap map[string]int64
-
-func init() {
-	downloadMap = make(map[string]int64)
-}
+var (
+	downloadMap     = make(map[string]int64)
+	downloadHistory = make(map[string]time.Time)
+	historyMutex    = &sync.Mutex{}
+)
 
 func dumpDataBackground(dumpFile string, interval time.Duration) {
 	for {
 		time.Sleep(interval)
 		data, _ := json.Marshal(downloadMap)
 		ioutil.WriteFile(dumpFile, data, 0644)
+		historyMutex.Lock()
+		for key, val := range downloadHistory {
+			if time.Since(val) > time.Minute*60 {
+				delete(downloadHistory, key)
+			}
+		}
+		historyMutex.Unlock()
 	}
 }
 
@@ -68,7 +76,17 @@ func NewStaticHandler(root string) interface{} {
 			if req.FormValue("download") == "true" {
 				w.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(abspath))
 			}
-			downloadMap[relpath] = downloadMap[relpath] + 1
+
+			// download stats update
+			remoteIp := getRealIP(req)
+			historyMutex.Lock()
+			hisKey := remoteIp + ":" + relpath
+			if time.Since(downloadHistory[hisKey]) > time.Minute*1 {
+				downloadMap[relpath] = downloadMap[relpath] + 1
+			}
+			downloadHistory[hisKey] = time.Now()
+			historyMutex.Unlock()
+
 			http.ServeFile(w, req, abspath)
 		}
 	}

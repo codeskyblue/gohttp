@@ -2,8 +2,10 @@ package routers
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func formatSize(file os.FileInfo) string {
@@ -20,4 +22,12 @@ func formatSize(file os.FileInfo) string {
 		return strconv.Itoa(int(size))
 	}
 	return ""
+}
+
+func getRealIP(req *http.Request) string {
+	xip := req.Header.Get("X-Real-IP")
+	if xip == "" {
+		xip = strings.Split(req.RemoteAddr, ":")[0]
+	}
+	return xip
 }
