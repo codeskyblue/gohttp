@@ -11,21 +11,23 @@ gohttp --port 8000 --root /your/workdir
 Usage: gohttp [<flags>]
 
 Flags:
-  -h, --help                     Show context-sensitive help (also try
-                                 --help-long and --help-man).
-      --port=8000                Port to listen
-      --root="."                 File root directory
-      --private                  Only listen on loopback address
-      --httpauth=HTTPAUTH        HTTP basic auth (ex: user:pass)
-      --cert=CERT                TLS cert.pem
-      --key=KEY                  TLS key.pem
-      --ftp                      Enable FTP support
-      --ftp-port=2121            FTP listen port
-      --ftp-auth="admin:123456"  FTP auth (ex: user:pass)
+  -h, --help               Show context-sensitive help (also try --help-long and --help-man).
+      --version            Show application version.
+      --port=8000          Port to listen
+      --root="."           File root directory
+      --private            Only listen on loopback address
+      --httpauth=HTTPAUTH  HTTP basic auth (ex: user:pass)
+      --cert=CERT          TLS cert.pem
+      --key=KEY            TLS key.pem
+      --gzip               Enable Gzip support
+      --upload             Enable upload support
+      --zipable            Enable archieve folder into zip
 ```
 
 ## Warning
-ftp feature has a serious memory link problem. Be careful with that.
+ftp feature has a serious cpu usage problem. Be careful with that.
+
+There are python scripts of which use `pyftpdlib` can do ftp server job.
 
 
 ![screenshot](images/screenshot1.png)
@@ -46,6 +48,7 @@ ftp feature has a serious memory link problem. Be careful with that.
 1. Apple ipa auto generate .plist file, qrcode can be recognized by iphone (Require https)
 1. Add ftp support(beta)
 1. Support modify the index page
+1. Download count statistics
 
 About **https**
 

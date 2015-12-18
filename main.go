@@ -14,12 +14,12 @@ import (
 	"github.com/codeskyblue/gohttp/routers"
 	"github.com/go-macaron/auth"
 	"github.com/go-macaron/gzip"
-	"github.com/goftp/posixfs-driver"
-	goftp "github.com/goftp/server"
+	//"github.com/goftp/posixfs-driver"
+	//goftp "github.com/goftp/server"
 	"gopkg.in/macaron.v1"
 )
 
-const VERSION = "0.1.1"
+const VERSION = "0.1.2"
 
 type Configure struct {
 	port     int
@@ -32,6 +32,8 @@ type Configure struct {
 	ftp      bool
 	ftpPort  int
 	ftpAuth  string
+	upload   bool
+	zipable  bool
 }
 
 var gcfg = Configure{}
@@ -57,19 +59,29 @@ func init() {
 	kingpin.Flag("cert", "TLS cert.pem").StringVar(&gcfg.cert)
 	kingpin.Flag("key", "TLS key.pem").StringVar(&gcfg.key)
 	kingpin.Flag("gzip", "Enable Gzip support").BoolVar(&gcfg.gzip)
-	kingpin.Flag("ftp", "Enable FTP support").BoolVar(&gcfg.ftp)
-	kingpin.Flag("ftp-port", "FTP listen port").Default("2121").IntVar(&gcfg.ftpPort)
-	kingpin.Flag("ftp-auth", "FTP auth (ex: user:pass)").Default("admin:123456").StringVar(&gcfg.ftpAuth)
+	//kingpin.Flag("ftp", "Enable FTP support").BoolVar(&gcfg.ftp)
+	//kingpin.Flag("ftp-port", "FTP listen port").Default("2121").IntVar(&gcfg.ftpPort)
+	//kingpin.Flag("ftp-auth", "FTP auth (ex: user:pass)").Default("admin:123456").StringVar(&gcfg.ftpAuth)
+	kingpin.Flag("upload", "Enable upload support").BoolVar(&gcfg.upload)
+	kingpin.Flag("zipable", "Enable archieve folder into zip").BoolVar(&gcfg.zipable)
 }
 
 func initRouters() {
+	m.Get("/*", routers.NewStaticHandler(routers.IndexOptions{
+		Root:    gcfg.root,
+		Upload:  gcfg.upload,
+		Zipable: gcfg.zipable,
+	}))
 	m.Get("/$qrcode", routers.Qrcode)
-	m.Get("/*", routers.NewStaticHandler(gcfg.root))
-	m.Post("/*", routers.NewUploadHandler(gcfg.root))
-	m.Get("/$zip/*", routers.NewZipDownloadHandler(gcfg.root))
 	m.Get("/$plist/*", routers.NewPlistHandler(gcfg.root))
 	m.Get("/$ipaicon/*", routers.NewIpaIconHandler(gcfg.root))
 	m.Get("/$ipa/*", routers.IPAHandler)
+	if gcfg.upload {
+		m.Post("/*", routers.NewUploadHandler(gcfg.root))
+	}
+	if gcfg.zipable {
+		m.Get("/$zip/*", routers.NewZipDownloadHandler(gcfg.root))
+	}
 	ReloadProxy := func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Debug, Hot reload", r.Host)
 		resp, err := http.Get("http://localhost:3000" + r.RequestURI)
@@ -119,20 +131,22 @@ func main() {
 		log.Printf("listens on 0.0.0.0@" + p) // + mesg)
 	}
 
-	if gcfg.ftp {
-		//log.Println("Enable FTP")
-		auths := strings.SplitN(gcfg.ftpAuth, ":", 2)
-		if len(auths) != 2 {
-			log.Fatal("ftp auth format error")
+	/*
+		if gcfg.ftp {
+			//log.Println("Enable FTP")
+			auths := strings.SplitN(gcfg.ftpAuth, ":", 2)
+			if len(auths) != 2 {
+				log.Fatal("ftp auth format error")
+			}
+			auth := FTPAuth{auths[0], auths[1]}
+			ftpserv := goftp.NewServer(&goftp.ServerOpts{
+				Port:    gcfg.ftpPort,
+				Factory: posixfs.NewPosixFSFactory(gcfg.root),
+				Auth:    &auth,
+			})
+			go ftpserv.ListenAndServe()
 		}
-		auth := FTPAuth{auths[0], auths[1]}
-		ftpserv := goftp.NewServer(&goftp.ServerOpts{
-			Port:    gcfg.ftpPort,
-			Factory: posixfs.NewPosixFSFactory(gcfg.root),
-			Auth:    &auth,
-		})
-		go ftpserv.ListenAndServe()
-	}
+	*/
 
 	var err error
 	if gcfg.key != "" && gcfg.cert != "" {

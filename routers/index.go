@@ -35,8 +35,8 @@ func dumpDataBackground(dumpFile string, interval time.Duration) {
 	}
 }
 
-func NewStaticHandler(root string) interface{} {
-	dumpFile := filepath.Join(root, ".gohttp.stat.json")
+func NewStaticHandler(opts IndexOptions) interface{} {
+	dumpFile := filepath.Join(opts.Root, ".gohttp.stat.json")
 	data, err := ioutil.ReadFile(dumpFile)
 	if err == nil {
 		json.Unmarshal(data, &downloadMap)
@@ -49,7 +49,7 @@ func NewStaticHandler(root string) interface{} {
 			format = "html"
 		}
 		relpath := filepath.Clean(req.URL.Path)
-		abspath := filepath.Join(root, relpath) //req.URL.Path)
+		abspath := filepath.Join(opts.Root, relpath) //req.URL.Path)
 		finfo, err := os.Stat(abspath)
 		if err != nil {
 			ctx.Error(500, err.Error())
@@ -61,7 +61,7 @@ func NewStaticHandler(root string) interface{} {
 				ctx.HTML(200, "index", nil)
 				return
 			case "json":
-				data, err := listDirectory(root, relpath)
+				data, err := listDirectory(opts.Root, relpath)
 				if err != nil {
 					ctx.Error(500, err.Error())
 					return
