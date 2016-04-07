@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/codeskyblue/gohttp",
-	"GoVersion": "go1.5.1",
+	"GoVersion": "go1.5.2",
 	"Deps": [
 		{
 			"ImportPath": "code.google.com/p/rsc/gf256",
@@ -46,18 +46,6 @@
 			"Rev": "c5ab7bf3a307593cd44cb272d1a5beea473dd072"
 		},
 		{
-			"ImportPath": "github.com/goftp/posixfs-driver",
-			"Rev": "190be88754cf3a75dfdd6bd66903efc7148ef382"
-		},
-		{
-			"ImportPath": "github.com/goftp/server",
-			"Rev": "d2083512c43feb1d24d9605e30da53f61716ca81"
-		},
-		{
-			"ImportPath": "github.com/jehiah/go-strftime",
-			"Rev": "2555f398a2e2a737c812553ca88190823b7d22f8"
-		},
-		{
 			"ImportPath": "github.com/klauspost/compress/flate",
 			"Rev": "cc3dd5b547c647bb58b74d005457c7f82055c422"
 		},
@@ -72,6 +60,18 @@
 		{
 			"ImportPath": "github.com/klauspost/crc32",
 			"Rev": "f8d2e12057f7ef26ae42ecfa42697f4bdc32d7eb"
+		},
+		{
+			"ImportPath": "github.com/rs/cors",
+			"Rev": "3ca2b550f6a4333b63c845850f760a7d00412cd6"
+		},
+		{
+			"ImportPath": "github.com/rs/xhandler",
+			"Rev": "d9d9599b6aaf6a058cb7b1f48291ded2cbd13390"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "318395d8b12f5dd0f1b7cd0fbb95195f49acb0f9"
 		},
 		{
 			"ImportPath": "gopkg.in/ini.v1",

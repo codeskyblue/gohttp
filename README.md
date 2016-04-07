@@ -49,6 +49,7 @@ There are python scripts of which use `pyftpdlib` can do ftp server job.
 1. Add ftp support(beta)
 1. Support modify the index page
 1. Download count statistics
+1. CORS enabled
 
 About **https**
 
