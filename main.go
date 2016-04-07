@@ -14,12 +14,11 @@ import (
 	"github.com/codeskyblue/gohttp/routers"
 	"github.com/go-macaron/auth"
 	"github.com/go-macaron/gzip"
-	//"github.com/goftp/posixfs-driver"
-	//goftp "github.com/goftp/server"
+	"github.com/rs/cors"
 	"gopkg.in/macaron.v1"
 )
 
-const VERSION = "0.1.2"
+const VERSION = "0.1.3"
 
 type Configure struct {
 	port     int
@@ -67,6 +66,8 @@ func init() {
 }
 
 func initRouters() {
+	c := cors.New(cors.Options{})
+	m.Use(c.HandlerFunc)
 	m.Get("/*", routers.NewStaticHandler(routers.IndexOptions{
 		Root:    gcfg.root,
 		Upload:  gcfg.upload,
