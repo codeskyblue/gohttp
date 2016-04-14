@@ -68,11 +68,14 @@ func init() {
 func initRouters() {
 	c := cors.New(cors.Options{})
 	m.Use(c.HandlerFunc)
-	m.Get("/*", routers.NewStaticHandler(routers.IndexOptions{
+	staticHandler := routers.NewStaticHandler(routers.IndexOptions{
 		Root:    gcfg.root,
 		Upload:  gcfg.upload,
 		Zipable: gcfg.zipable,
-	}))
+	})
+	m.Get("/*", staticHandler)
+	m.Head("/*", staticHandler)
+
 	m.Get("/$qrcode", routers.Qrcode)
 	m.Get("/$plist/*", routers.NewPlistHandler(gcfg.root))
 	m.Get("/$ipaicon/*", routers.NewIpaIconHandler(gcfg.root))
