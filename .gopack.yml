@@ -18,5 +18,4 @@ prepare:
   - npm install
   - make bundle
 script:
-  - go get -v
   - make binary
