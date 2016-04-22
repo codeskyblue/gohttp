@@ -18,4 +18,5 @@ prepare:
   - npm install
   - make bundle
 script:
+  - go get -u github.com/jteeuwen/go-bindata/...
   - make binary
