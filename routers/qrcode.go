@@ -3,7 +3,7 @@ package routers
 import (
 	"net/http"
 
-	"code.google.com/p/rsc/qr"
+	"github.com/SKatiyar/qr"
 )
 
 func Qrcode(r *http.Request, w http.ResponseWriter) {

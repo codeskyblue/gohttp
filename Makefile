@@ -3,10 +3,10 @@
 # hzsunshx, 2015-02-11 13:17
 #
 
+prod: bundle binary
+
 dev: clean
 	npm start
-
-prod: bundle binary
 
 bundle:
 	webpack -p --progress --config webpack.config.prod.js

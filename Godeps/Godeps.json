@@ -1,20 +1,14 @@
 {
 	"ImportPath": "github.com/codeskyblue/gohttp",
-	"GoVersion": "go1.6",
+	"GoVersion": "go1.6.1",
 	"Deps": [
-		{
-			"ImportPath": "code.google.com/p/rsc/gf256",
-			"Comment": "null-258",
-			"Rev": "2d8aa6027fab93979a3b4ecdbeb1ba430b489318"
-		},
-		{
-			"ImportPath": "code.google.com/p/rsc/qr",
-			"Comment": "null-258",
-			"Rev": "2d8aa6027fab93979a3b4ecdbeb1ba430b489318"
-		},
 		{
 			"ImportPath": "github.com/DHowett/go-plist",
 			"Rev": "f4bf55d2395500aacc17eedcebc5f139336b4312"
+		},
+		{
+			"ImportPath": "github.com/SKatiyar/qr",
+			"Rev": "25b6bdf44e6788d9a3d54832a976d160f497c12b"
 		},
 		{
 			"ImportPath": "github.com/Unknwon/com",
