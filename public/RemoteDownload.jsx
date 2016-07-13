@@ -11,6 +11,7 @@ var RDownloadModal = React.createClass({
       url: "",
       message: "",
       percent: 0,
+      downloading: false,
     };
   },
   handleChange: function() {
@@ -22,9 +23,11 @@ var RDownloadModal = React.createClass({
   },
   handleDownload: function() {
     console.log("download:", this.state.url)
+    this.setState({downloading: true});
     var that = this;
     var req = request.get(location.protocol+'//'+location.host+'/$wget/'+this.state.url);
     req.end(function(err, res){
+        that.setState({downloading: false});
         if(res.ok) {
           that.onHide();
         } else {
@@ -40,9 +43,11 @@ var RDownloadModal = React.createClass({
       percent: 0,
       message: "",
       url: "",
+      downloading: false,
     })
   },
   render: function() {
+    let downloading = this.state.downloading
     return (
       <div>        
         <Modal
@@ -72,7 +77,7 @@ var RDownloadModal = React.createClass({
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <Button bsStyle="primary" onClick={this.handleDownload}>Download</Button>
+              <Button bsStyle="primary" disabled={downloading} onClick={!downloading?this.handleDownload : null}>{downloading?'Downloading':'Download'}</Button>
               <Button onClick={this.onHide}>Close</Button>
             </Modal.Footer>
           </Modal.Header>
