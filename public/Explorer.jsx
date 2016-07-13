@@ -164,7 +164,7 @@ var Explorer = React.createClass({
                     <Button bsSize="xsmall" onClick={
                       ()=>this.setState({showRDownload: true})
                     }>
-                      Remote Download <Icon name="download"/>
+                      Remote Download <Icon name="cloud-download"/>
                     </Button>
                   </ButtonToolbar>
                   
