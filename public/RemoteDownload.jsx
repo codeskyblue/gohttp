@@ -64,7 +64,7 @@ var RDownloadModal = React.createClass({
                 type="text"
                 value={this.state.url}
                 placeholder="http:// or https://"
-                label="URL:"
+                label="Arguments passed to wget:"
                 ref="input"
                 onChange={this.handleChange} />
               </form>
