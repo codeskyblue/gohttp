@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"os"
 
+	"os/exec"
+	"path/filepath"
+
 	"strconv"
 	"strings"
 
@@ -107,6 +110,31 @@ func initRouters() {
 	}
 	m.Get("/-/:rand(.*).hot-update.:ext(.*)", ReloadProxy)
 	m.Get("/-/:name(.*).bundle.js", ReloadProxy)
+
+	WgetHandler := func(req *http.Request, w http.ResponseWriter, ctx *macaron.Context) {
+		url := req.RequestURI
+		//url := ctx.Params("*")
+		url = url[7:]
+		url = strings.Replace(url, "http:/", "http://", -1)
+		url = strings.Replace(url, "https:/", "https://", -1)
+		dir := "downloads"
+		root, _ := filepath.Abs(gcfg.root)
+
+		fspath := filepath.Join(root, dir)
+		os.MkdirAll(fspath, os.ModePerm)
+
+		cmd := exec.Command("wget", "-P", fspath, url)
+		err := cmd.Start()
+		if err != nil {
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		} else {
+			cmd.Wait()
+			http.Redirect(w, req, "/downloads", http.StatusFound)
+		}
+	}
+
+	m.Get("/$wget/*", WgetHandler)
 }
 
 type FTPAuth struct {
