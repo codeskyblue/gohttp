@@ -124,12 +124,11 @@ func initRouters() {
 		os.MkdirAll(fspath, os.ModePerm)
 
 		cmd := exec.Command("wget", "-P", fspath, url)
-		err := cmd.Start()
+		err := cmd.Run()
 		if err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		} else {
-			cmd.Wait()
 			http.Redirect(w, req, "/downloads", http.StatusFound)
 		}
 	}
