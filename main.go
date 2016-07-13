@@ -112,7 +112,7 @@ func initRouters() {
 	m.Get("/-/:name(.*).bundle.js", ReloadProxy)
 
 	WgetHandler := func(req *http.Request, w http.ResponseWriter, ctx *macaron.Context) {
-		url := req.RequestURI
+		url := req.URL.Path
 		//url := ctx.Params("*")
 		url = url[7:]
 		url = strings.Replace(url, "http:/", "http://", -1)
