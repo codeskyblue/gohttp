@@ -124,7 +124,7 @@ func initRouters() {
 		fspath := filepath.Join(root, dir)
 		os.MkdirAll(fspath, os.ModePerm)
 
-		cmd := exec.Command("wget", "-P", fspath)
+		cmd := exec.Command("wget", "--content-disposition", "-P", fspath)
 		cmd.Args = append(cmd.Args, args...)
 		log.Println("exec: ", cmd.Args)
 		err := cmd.Run()
