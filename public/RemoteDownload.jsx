@@ -25,7 +25,7 @@ var RDownloadModal = React.createClass({
     console.log("download:", this.state.url)
     this.setState({downloading: true});
     var that = this;
-    var req = request.get(location.protocol+'//'+location.host+'/$wget/'+this.state.url);
+    var req = request.get('/$wget/'+this.state.url);
     req.end(function(err, res){
         that.setState({downloading: false});
         if(res.ok) {
