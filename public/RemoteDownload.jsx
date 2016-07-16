@@ -24,6 +24,23 @@ var RDownloadModal = React.createClass({
           url : this.refs.input.getValue()
       });
   },
+  sizeString : function (sz) {
+      var us = "BKMGT";
+      for (var i = 0; i < 5 && sz > 1000; i++) {
+          sz = sz * 1.00 / 1024;
+      }
+      return this.formatString("{0} {1}", sz.toFixed(2), us[i]);
+  },
+  formatString: function() {
+    if (arguments.length == 0)
+        return null;
+    var str = arguments[0];
+    for ( var i = 1; i < arguments.length; i++) {
+        var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+        str = str.replace(re, arguments[i]);
+    }
+    return str;
+  },
   update : function (flag) {
       if (flag && this.state.downloading) {
           var tid = setTimeout(this.onUpdate, 100);
@@ -50,12 +67,13 @@ var RDownloadModal = React.createClass({
               if (rs.downloaded >= that.state.fsize) {
                   that.setState({
                       percent : 100,
-                      message : "Download completed",
+                      message : that.formatString("Download completed\n[ {0} ]\t{1}", that.sizeString(rs.downloaded), that.state.fname),
                       downloading: false
                   });
               } else {
                   that.setState({
-                      percent : rs.downloaded * 100 / that.state.fsize
+                      percent : rs.downloaded * 100 / that.state.fsize,
+                      message: that.formatString("[{0} / {2}] {1}", that.sizeString(rs.downloaded), that.state.fname, that.sizeString(that.state.fsize))
                   });
                   that.update(true);
               }
