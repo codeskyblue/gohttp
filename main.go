@@ -108,6 +108,7 @@ func initRouters() {
 	m.Get("/-/:name(.*).bundle.js", ReloadProxy)
 
 	m.Get("/$wget/*", WgetHandler)
+	m.Get("/$wstat/*", WstatHandler)
 }
 
 type FTPAuth struct {

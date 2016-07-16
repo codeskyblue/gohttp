@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,6 +12,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"gopkg.in/macaron.v1"
@@ -38,24 +37,34 @@ func findName(str string) string {
 	return ""
 }
 
-func getHeaderLen(str string) int {
-	re, _ := regexp.Compile(`\n\n`)
-	subs := re.FindAllStringSubmatchIndex(str, 1)
-	if len(subs) != 0 {
-		return subs[0][0] + 2
+func getFileSize(fp string) int64 {
+	finfo, err := os.Stat(fp)
+
+	if err != nil {
+		return -1
 	}
-	return -1
+
+	return finfo.Size()
 }
 
-func findPercent(str string) int {
-	re, _ := regexp.Compile(`(\d+)%`)
-	subs := re.FindAllStringSubmatch(str, 1)
-	if len(subs) != 0 {
-		i, _ := strconv.Atoi(subs[0][1])
-		return i
+func isWgetExit(str string) bool {
+	re, _ := regexp.Compile(`failed: .*\n`)
+	subs := re.FindAllStringSubmatch(str, -1)
+	sl := len(subs)
+	if sl != 0 {
+		if strings.Contains(subs[sl-1][0], "No route") {
+
+		} else {
+			return true
+		}
 	}
-	return -1
+	return false
 }
+
+var fileManager = struct {
+	sync.RWMutex
+	m map[string]int64
+}{m: make(map[string]int64)}
 
 func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context) {
 	var err error
@@ -90,26 +99,14 @@ func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context)
 
 	var size int64
 	var name string
-	var pos int
-	var lastcount int = -1
-	var errcount int = 0
+
 	var goon bool = false
 	for i := 0; i < 100; i++ {
-		if i%10 == 0 {
-			outcount := serr.Len()
-			if outcount == lastcount {
-				errcount++
-			} else {
-				lastcount = outcount
-				errcount = 0
-			}
-
-			if errcount >= 5 {
-				err = errors.New("exit while wget has no response")
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
+		if isWgetExit(serr.String()) {
+			http.Error(w, serr.String(), http.StatusInternalServerError)
+			return
 		}
+
 		time.Sleep(time.Millisecond * 100)
 		size = findLength(serr.String())
 		if size == -1 {
@@ -119,63 +116,40 @@ func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context)
 		if name == "" {
 			continue
 		}
-		pos = getHeaderLen(serr.String())
-		if pos == -1 {
-			continue
-		}
+
 		goon = true
 		break
 	}
 
 	if !goon {
-		err = errors.New("exit while can not get fileinfos ")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, serr.String(), http.StatusInternalServerError)
 		return
 	}
 
 	name = path.Base(name)
-	//log.Printf("name:[%s], size:[%d], headerlen:[%d]\n", name, size, pos)
-	var per int = 0
 
-	//w.Header().Set("Transfer-Encoding", "chunked")
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, `{"fname":"%s","fsize":%d,"per":%d}`, name, size, per)
-	w.(http.Flusher).Flush()
+	fileManager.Lock()
+	fileManager.m[name] = size
+	fileManager.Unlock()
 
-	serr.Next(pos)
+	json := fmt.Sprintf(`{"fname":"%s","fsize":%d}`, name, size)
+	fmt.Println(json)
 
-	reader := bufio.NewReader(&serr)
-	var lastline, tmpline []byte
+	w.Write([]byte(json))
+}
 
-	for i := 0; i < 100; i++ {
-		time.Sleep(time.Second)
-		for {
-			line, err := reader.ReadBytes('\n')
-			if err != nil {
-				tmpline = line
-				break
-			} else {
-				lastline = append(tmpline, line...)
-				tmpline = tmpline[:0]
-			}
-		}
-		if len(tmpline) == 0 {
-			per = 100
-			//log.Printf("%d%%\n", per)
-			fmt.Fprintf(w, `{"fname":"%s","fsize":%d,"per":%d}`, name, size, per)
-			w.(http.Flusher).Flush()
-			break
-		}
-		per = findPercent(string(lastline))
-		if per != -1 {
-			//log.Printf("%d%%\n", per)
-			fmt.Fprintf(w, `{"fname":"%s","fsize":%d,"per":%d}`, name, size, per)
-			w.(http.Flusher).Flush()
-			if per == 100 {
-				break
-			}
-		}
-	}
-	err = cmd.Wait()
-	return
+func WstatHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context) {
+	url := req.URL.Path
+	fname := url[8:]
+
+	dir := "downloads"
+	root, _ := filepath.Abs(gcfg.root)
+	fspath := filepath.Join(root, dir, fname)
+
+	downloaded := getFileSize(fspath)
+
+	json := fmt.Sprintf(`{"fname":"%s","downloaded":%d}`, fname, downloaded)
+	fmt.Println(json)
+
+	w.Write([]byte(json))
 }
