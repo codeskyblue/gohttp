@@ -21,7 +21,7 @@ import (
 )
 
 func findLength(str string) int64 {
-	re, _ := regexp.Compile(`\nLength: (.+) \[`)
+	re, _ := regexp.Compile(`\nLength: (.+?) `)
 	subs := re.FindAllStringSubmatch(str, 1)
 	if len(subs) != 0 {
 		i, _ := strconv.ParseInt(subs[0][1], 10, 64)
@@ -33,6 +33,12 @@ func findLength(str string) int64 {
 func findName(str string) string {
 	re, _ := regexp.Compile("Saving to: `(.*)'")
 	subs := re.FindAllStringSubmatch(str, 1)
+	if len(subs) != 0 {
+		return subs[0][1]
+	}
+
+	re, _ = regexp.Compile("=> `(.*)'")
+	subs = re.FindAllStringSubmatch(str, 1)
 	if len(subs) != 0 {
 		return subs[0][1]
 	}
@@ -87,10 +93,10 @@ func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context)
 		url = decode(url[9:])
 	} else {
 		url = url[7:]
+		url = strings.Replace(url, "http:/", "http://", -1)
+		url = strings.Replace(url, "https:/", "https://", -1)
+		url = strings.Replace(url, "ftp:/", "ftp://", -1)
 	}
-
-	url = strings.Replace(url, "http:/", "http://", -1)
-	url = strings.Replace(url, "https:/", "https://", -1)
 
 	args := strings.Split(url, " ")
 	dir := "downloads"
