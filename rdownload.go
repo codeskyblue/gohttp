@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"encoding/ascii85"
+	"encoding/base64"
 	"fmt"
 	"log"
 	"net/http"
@@ -66,6 +68,20 @@ var fileManager = struct {
 	m map[string]int64
 }{m: make(map[string]int64)}
 
+func decode(str string) string {
+	buf, _ := base64.StdEncoding.DecodeString(str)
+	nbuf := make([]byte, len(buf))
+	ascii85.Decode(nbuf, buf, true)
+
+	//---------- 这个地方由于ascii85将4个字节作为一组
+	//           不够4个用0填充
+	rl := 0
+	for ; rl < len(nbuf) && nbuf[rl] != 0; rl++ {
+	}
+	//----------
+	return string(nbuf[:rl])
+}
+
 func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context) {
 	var err error
 	defer func() {
@@ -75,9 +91,15 @@ func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context)
 	}()
 
 	url := req.URL.Path
-	url = url[7:]
+	if strings.HasPrefix(url, "/$wget/s/") {
+		url = decode(url[9:])
+	} else {
+		url = url[7:]
+	}
+
 	url = strings.Replace(url, "http:/", "http://", -1)
 	url = strings.Replace(url, "https:/", "https://", -1)
+
 	args := strings.Split(url, " ")
 	dir := "downloads"
 	root, _ := filepath.Abs(gcfg.root)
@@ -87,7 +109,7 @@ func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context)
 
 	cmd := exec.Command("wget", "--content-disposition", "-P", fspath)
 	cmd.Args = append(cmd.Args, args...)
-	log.Println("exec: ", cmd.Args)
+	log.Println("exec:", cmd.Args)
 
 	var serr bytes.Buffer
 	cmd.Stderr = &serr
