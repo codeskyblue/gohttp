@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/ascii85"
 	"encoding/base64"
 	"fmt"
 	"log"
@@ -17,11 +16,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/breezechen/base91"
 	"gopkg.in/macaron.v1"
 )
 
 func findLength(str string) int64 {
-	re, _ := regexp.Compile(`\nLength: (\d+) `)
+	re, _ := regexp.Compile(`\nLength: (.+) \[`)
 	subs := re.FindAllStringSubmatch(str, 1)
 	if len(subs) != 0 {
 		i, _ := strconv.ParseInt(subs[0][1], 10, 64)
@@ -69,17 +69,9 @@ var fileManager = struct {
 }{m: make(map[string]int64)}
 
 func decode(str string) string {
-	buf, _ := base64.StdEncoding.DecodeString(str)
-	nbuf := make([]byte, len(buf))
-	ascii85.Decode(nbuf, buf, true)
-
-	//---------- 这个地方由于ascii85将4个字节作为一组
-	//           不够4个用0填充
-	rl := 0
-	for ; rl < len(nbuf) && nbuf[rl] != 0; rl++ {
-	}
-	//----------
-	return string(nbuf[:rl])
+	tmp, _ := base64.StdEncoding.DecodeString(str)
+	buf, _ := base91.StdEncoding.DecodeString(string(tmp))
+	return string(buf)
 }
 
 func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context) {
@@ -123,7 +115,7 @@ func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context)
 	var name string
 
 	var goon bool = false
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 300; i++ {
 		if isWgetExit(serr.String()) {
 			http.Error(w, serr.String(), http.StatusInternalServerError)
 			return
