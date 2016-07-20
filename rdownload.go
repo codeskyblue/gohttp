@@ -16,7 +16,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/breezechen/base91"
 	"gopkg.in/macaron.v1"
 )
 
@@ -31,13 +30,13 @@ func findLength(str string) int64 {
 }
 
 func findName(str string) string {
-	re, _ := regexp.Compile("Saving to: `(.*)'")
+	re, _ := regexp.Compile("Saving to: [`‘](.*)['’]")
 	subs := re.FindAllStringSubmatch(str, 1)
 	if len(subs) != 0 {
 		return subs[0][1]
 	}
 
-	re, _ = regexp.Compile("=> `(.*)'")
+	re, _ = regexp.Compile("=> [`‘](.*)['’]")
 	subs = re.FindAllStringSubmatch(str, 1)
 	if len(subs) != 0 {
 		return subs[0][1]
@@ -74,10 +73,11 @@ var fileManager = struct {
 	m map[string]int64
 }{m: make(map[string]int64)}
 
+var obfEncoding = base64.NewEncoding("-+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
+
 func decode(str string) string {
-	tmp, _ := base64.StdEncoding.DecodeString(str)
-	buf, _ := base91.StdEncoding.DecodeString(string(tmp))
-	return string(buf)
+	tmp, _ := obfEncoding.DecodeString(str)
+	return string(tmp)
 }
 
 func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context) {
@@ -89,14 +89,7 @@ func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context)
 	}()
 
 	url := req.URL.Path
-	if strings.HasPrefix(url, "/$wget/s/") {
-		url = decode(url[9:])
-	} else {
-		url = url[7:]
-		url = strings.Replace(url, "http:/", "http://", -1)
-		url = strings.Replace(url, "https:/", "https://", -1)
-		url = strings.Replace(url, "ftp:/", "ftp://", -1)
-	}
+	url = decode(url[7:])
 
 	args := strings.Split(url, " ")
 	dir := "downloads"
