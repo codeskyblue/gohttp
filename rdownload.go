@@ -149,6 +149,9 @@ func WgetHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context)
 	fmt.Println(json)
 
 	w.Write([]byte(json))
+	go func() {
+		cmd.Wait()
+	}()
 }
 
 func WstatHandler(req *http.Request, w http.ResponseWriter, ctx *macaron.Context) {
