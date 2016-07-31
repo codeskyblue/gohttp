@@ -1,6 +1,8 @@
 # gohttp
 A http file server written by golang and reactjs.
 
+# Not maintained any more. Move to <https://github.com/codeskyblue/gohttpserver>
+
 <del>Binary can be download from [gobuild.io](https://gobuild.io/codeskyblue/gohttp)</del>
 
 ## Usage
