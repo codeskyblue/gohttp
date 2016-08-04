@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
 	"strconv"
 	"strings"
 
@@ -107,6 +106,9 @@ func initRouters() {
 	}
 	m.Get("/-/:rand(.*).hot-update.:ext(.*)", ReloadProxy)
 	m.Get("/-/:name(.*).bundle.js", ReloadProxy)
+
+	m.Get("/$wget/*", WgetHandler)
+	m.Get("/$wstat/*", WstatHandler)
 }
 
 type FTPAuth struct {

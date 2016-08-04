@@ -19,6 +19,7 @@ var UploadModal = require('./UploadModal.jsx');
 var Icon = require('./Icon.jsx')
 var Markdown = require('./Markdown.jsx')
 var FilePreview = require('./FilePreview.jsx');
+var RDownloadModal = require('./RemoteDownload.jsx')
 
 
 var FileList = React.createClass({
@@ -160,6 +161,11 @@ var Explorer = React.createClass({
                     }>
                       Upload <Icon name="upload"/>
                     </Button>
+                    <Button bsSize="xsmall" onClick={
+                      ()=>this.setState({showRDownload: true})
+                    }>
+                      Remote Download <Icon name="cloud-download"/>
+                    </Button>
                   </ButtonToolbar>
                   
                   <UploadModal onHide={
@@ -168,6 +174,9 @@ var Explorer = React.createClass({
                       ()=>this.loadFilesFromServer()
                     }
                     show={this.state.showUpload}/>
+                  <RDownloadModal onHide={
+                      ()=>this.setState({showRDownload: false})}
+                    show={this.state.showRDownload}/>
                 </td>
               </tr>
               <tr>
